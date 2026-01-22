@@ -64,7 +64,6 @@ def update_product_by_id(product_id):
   product = {}
 
   for record in product_records:
-    print(record['product_id'])
     if record['product_id'] == product_id:
       product = record
 
@@ -78,8 +77,6 @@ def update_product_by_id(product_id):
   product['description'] = post_data.get('description', product['description'])
   product['price'] = post_data.get('price', product['price'])
   
-  if "active" in post_data:
-    return jsonify({"message": "unable to update field: active"}), 400
   return jsonify({"message" : "product updated", "result": product }), 200
 
 
