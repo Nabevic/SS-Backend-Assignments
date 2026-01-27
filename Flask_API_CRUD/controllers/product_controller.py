@@ -12,11 +12,11 @@ def add_product():
       return jsonify({"message": f"{field} is required to add a product"}), 400
     
   for product in product_records:
-    if post_data['product_id'] == product['product_id']:
+    if post_data['product_id'] == int(product['product_id']):
       return jsonify({"message": "Invalid input. product_id must be unique"}), 400
 
-  if not post_data['product_id'].isnumeric():
-      return jsonify({"message": "Invalid input. product_id must be a number"}), 400
+  if type(post_data['product_id']) != int:
+    return jsonify({"message": "Invalid input. product_id must be a number"}), 400
   
   if post_data['product_name'].strip("/\-_., ") == "":
     return  jsonify({"message": "invalid product_name"}), 400
@@ -29,7 +29,7 @@ def add_product():
   if "active" in post_data:
     product['active'] = post_data['active']
   else:
-    product['active'] = "true"
+    product['active'] = True
 
   product_records.append(product)
 
@@ -38,10 +38,10 @@ def add_product():
 
 def get_product_by_id(product_id):
   for product in product_records:
-    if product['product_id'] == product_id:
+    if product['product_id'] == int(product_id):
       return jsonify({"message": "product found", "result": product}), 200
     
-  return jsonify({"message": "product not found"}), 400
+  return jsonify({"message": "product not found"}), 404
 
 
 def get_all_products():
@@ -55,7 +55,7 @@ def get_active_products():
       active_products.append(product)
   if active_products:
     return jsonify({"message": "products found", "results": active_products}), 200
-  return jsonify({"message": "products not found"}), 400
+  return jsonify({"message": "products not found"}), 404
 
 
 def update_product_by_id(product_id):
@@ -64,11 +64,11 @@ def update_product_by_id(product_id):
   product = {}
 
   for record in product_records:
-    if record['product_id'] == product_id:
+    if record['product_id'] == int(product_id):
       product = record
 
   if not product:
-    return jsonify({"message": "product not found"}), 400
+    return jsonify({"message": "product not found"}), 404
 
   if post_data['product_name'].strip("/\-_., ") == "":
     return  jsonify({"message": "Invalid input. product_name must contain valid characters"}), 400
@@ -86,8 +86,11 @@ def update_product_activation(product_id):
   product = {}
 
   for record in product_records:
-    if record['product_id'] == product_id:
+    if record['product_id'] == int(product_id):
       product = record
+
+  if not product:
+    return jsonify({"message": "product not found"}), 404
 
   product['active'] = patch_data.get('active', product['active'])
 
@@ -97,8 +100,11 @@ def update_product_activation(product_id):
 def delete_product_by_id(product_id):
   
   for record in product_records:
-    if record['product_id'] == product_id:
+    if record['product_id'] == int(product_id):
       product_records.remove(record)
       removed_record = record
+      return jsonify({"message":"product deleted","result": removed_record}), 200
+    
+  return jsonify({"message":"Unable to delete product: Product not found"}), 404
+
   
-  return jsonify({"message":"product deleted","result": removed_record}), 200
