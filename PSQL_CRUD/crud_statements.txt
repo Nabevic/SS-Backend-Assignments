@@ -54,6 +54,13 @@ VALUES (
   TRUE
 );
 
+INSERT INTO Categories (
+  category_name
+)
+VALUES (
+  'Prototype'
+);
+
 INSERT INTO Products (
   product_name,
   company_id,
@@ -78,12 +85,6 @@ VALUES (
   1
 );
 
-INSERT INTO Categories (
-  category_name
-)
-VALUES (
-  'Prototype'
-);
 
 INSERT INTO ProductsCategoriesXref (
   product_id,
@@ -98,9 +99,9 @@ VALUES (
 READ:
 
 SELECT * FROM Companies;
+SELECT * FROM Categories;
 SELECT * FROM Products;
 SELECT * FROM Warranties;
-SELECT * FROM Categories;
 SELECT * FROM ProductsCategoriesXref;
 
 SELECT * 
