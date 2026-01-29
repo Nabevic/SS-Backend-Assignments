@@ -52,13 +52,20 @@ INSERT INTO Companies (
 VALUES (
   'Test Company',
   TRUE
+),
+(
+  'Toyz4Kidz',
+  TRUE
 );
 
 INSERT INTO Categories (
   category_name
 )
 VALUES (
-  'Prototype'
+  'Prototypes'
+),
+(
+  'Toys'
 );
 
 INSERT INTO Products (
@@ -73,6 +80,34 @@ VALUES (
   2,
   'Can you solve this infernal machine?',
   9.95,
+  TRUE
+),
+ (
+  'Prototype MK I',
+  1,
+  'First of its kind.',
+  5.95,
+  TRUE
+),
+ (
+  'Prototype MK II',
+  1,
+  'Better than the last.',
+  9.95,
+  TRUE
+),
+ (
+  'Prototype MK III',
+  1,
+  'Better than the last.',
+  15.95,
+  TRUE
+),
+ (
+  'Kids Toy',
+  2,
+  'Your standard toy for kids.',
+  19.95,
   TRUE
 );
 
@@ -90,10 +125,12 @@ INSERT INTO ProductsCategoriesXref (
   product_id,
   category_id
 )
-VALUES (
-  3,
-  2
-);
+VALUES 
+(1,2),
+(2,1),
+(3,1),
+(4,1),
+(5,2);
 
 
 READ:
@@ -116,15 +153,16 @@ SELECT *
 FROM Companies
 WHERE company_id = 1;
 
-SELECT pcx.category_id, c.category_name, pcx.product_id, p.product_name
+SELECT c.category_id, c.category_name, array_agg(p.product_name ORDER BY p.product_name) AS associated_products
 FROM Categories c
-INNER JOIN ProductsCategoriesXref pcx
+JOIN ProductsCategoriesXref pcx
   ON pcx.category_id = c.category_id
-INNER JOIN Products p
+JOIN Products p
   ON pcx.product_id = p.product_id
-WHERE c.category_id = 1;
+WHERE c.category_id = 1
+GROUP BY c.category_id, c.category_name;
 
-SELECT p.*, w.warranty_id, w.warranty_months, c.category_id, c.category_name
+SELECT p.*, w.warranty_months, array_agg(c.category_name ORDER BY c.category_name) AS associated_categories
 FROM Products p
 INNER JOIN ProductsCategoriesXref pcx
   ON pcx.product_id = p.product_id
@@ -132,7 +170,8 @@ LEFT OUTER JOIN Categories c
   ON pcx.category_id = c.category_id
 LEFT OUTER JOIN Warranties w
   ON w.product_id = p.product_id
-WHERE p.product_id = 1;
+WHERE p.product_id = 1
+GROUP BY p.product_id, w.warranty_months;
 
 SELECT *
 FROM Warranties
@@ -144,7 +183,7 @@ UPDATE:
 
 
 UPDATE Companies
-SET company_name = 'The Testing Company'
+SET company_name = 'The Prototype Factory'
 WHERE company_id = 1;
 
 UPDATE Categories
@@ -153,7 +192,7 @@ WHERE category_id = 1;
 
 UPDATE Products
 SET description = 'This needs an update', price = 24.95
-WHERE product_id = 1;
+WHERE product_id = 2;
 
 UPDATE Warranties
 SET warranty_months = 12
