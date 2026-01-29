@@ -1,0 +1,213 @@
+
+DATABASE NAME: psqlassignment
+
+Tables:
+
+CREATE TABLE IF NOT EXISTS Companies (
+  company_id SERIAL PRIMARY KEY,
+  company_name VARCHAR UNIQUE NOT NULL,
+  active BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS Products (
+  product_id SERIAL PRIMARY KEY,
+  product_name VARCHAR UNIQUE NOT NULL,
+  company_id INTEGER,
+  description VARCHAR,
+  price REAL,
+  active BOOLEAN,
+  FOREIGN KEY (company_id)
+    REFERENCES Companies(company_id)
+);
+
+CREATE TABLE IF NOT EXISTS Warranties (
+  warranty_id SERIAL PRIMARY KEY,
+  warranty_months INTEGER NOT NULL,
+  product_id INTEGER,
+  FOREIGN KEY (product_id)
+    REFERENCES Products(product_id)
+);
+
+CREATE TABLE IF NOT EXISTS Categories (
+  category_id SERIAL PRIMARY KEY,
+  category_name VARCHAR UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ProductsCategoriesXref (
+  product_id INTEGER,
+  category_id INTEGER,
+  PRIMARY KEY (product_id, category_id),
+  FOREIGN KEY (product_id)
+    REFERENCES Products (product_id),
+  FOREIGN KEY (category_id)
+    REFERENCES Categories (category_id)
+);
+
+
+Create:
+
+INSERT INTO Companies (
+  company_name,
+  active)
+VALUES (
+  'Test Company',
+  TRUE
+);
+
+INSERT INTO Products (
+  product_name,
+  company_id,
+  description,
+  price,
+  active
+)
+VALUES (
+  'Rubix Cube',
+  2,
+  'Can you solve this infernal machine?',
+  9.95,
+  TRUE
+);
+
+INSERT INTO Warranties (
+  warranty_months,
+  product_id
+)
+VALUES (
+  6,
+  1
+);
+
+INSERT INTO Categories (
+  category_name
+)
+VALUES (
+  'Prototype'
+);
+
+INSERT INTO ProductsCategoriesXref (
+  product_id,
+  category_id
+)
+VALUES (
+  3,
+  2
+);
+
+
+READ:
+
+SELECT * FROM Companies;
+SELECT * FROM Products;
+SELECT * FROM Warranties;
+SELECT * FROM Categories;
+SELECT * FROM ProductsCategoriesXref;
+
+SELECT * 
+FROM Products
+WHERE active = TRUE;
+
+SELECT * 
+FROM Products
+WHERE company_id = 1;
+
+SELECT *
+FROM Companies
+WHERE company_id = 1;
+
+SELECT pcx.category_id, c.category_name, pcx.product_id, p.product_name
+FROM Categories c
+INNER JOIN ProductsCategoriesXref pcx
+  ON pcx.category_id = c.category_id
+INNER JOIN Products p
+  ON pcx.product_id = p.product_id
+WHERE c.category_id = 1;
+
+SELECT p.*, w.warranty_id, w.warranty_months, c.category_id, c.category_name
+FROM Products p
+INNER JOIN ProductsCategoriesXref pcx
+  ON pcx.product_id = p.product_id
+LEFT OUTER JOIN Categories c 
+  ON pcx.category_id = c.category_id
+LEFT OUTER JOIN Warranties w
+  ON w.product_id = p.product_id
+WHERE p.product_id = 1;
+
+SELECT *
+FROM Warranties
+Where warranty_id = 1;
+
+
+
+UPDATE:
+
+
+UPDATE Companies
+SET company_name = 'The Testing Company'
+WHERE company_id = 1;
+
+UPDATE Categories
+SET category_name = 'Prototypes'
+WHERE category_id = 1;
+
+UPDATE Products
+SET description = 'This needs an update', price = 24.95
+WHERE product_id = 1;
+
+UPDATE Warranties
+SET warranty_months = 12
+WHERE warranty_id = 1;
+
+UPDATE ProductsCategoriesXref
+SET category_id = 1
+WHERE product_id = 3 AND category_id = 2; 
+
+
+DELETE:
+
+BEGIN;
+
+DELETE FROM ProductsCategoriesXref
+WHERE product_id = 1;
+
+DELETE FROM Warranties
+WHERE product_id = 1;
+
+DELETE FROM Products
+WHERE product_id = 1;
+
+COMMIT;
+
+
+BEGIN;
+
+DELETE FROM ProductsCategoriesXref
+WHERE category_id = 1;
+
+DELETE FROM Categories
+WHERE category_id = 1;
+
+COMMIT;
+
+
+BEGIN;
+
+DELETE FROM ProductsCategoriesXref
+USING Products
+WHERE ProductsCategoriesXref.product_id = Products.product_id
+  AND Products.company_id = 2;
+
+DELETE FROM Products
+WHERE company_id = 2;
+
+DELETE FROM Companies
+WHERE company_id = 2;
+
+COMMIT;
+
+
+DELETE FROM Warranties
+WHERE warranty_id = 1;
+
+
+
