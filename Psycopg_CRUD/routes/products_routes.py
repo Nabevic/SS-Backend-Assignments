@@ -10,6 +10,10 @@ def add_product_route():
   return controllers.add_product()
 
 
+@product.route('/product/category', methods=['POST'])
+def add_product_category_association_route():
+  return controllers.add_product_category_association()
+
 @product.route('/products', methods=['GET'])
 def get_all_products_route():
   return controllers.get_all_products()
