@@ -1,17 +1,9 @@
 from flask import Flask, jsonify, request
-
-import psycopg2
-import os
+from db import connect_db
 import routes
 
-database_name = os.environ.get("DATABASE_NAME")
-user_name = os.environ.get("USER")
-password = os.environ.get('PASSWORD')
-app_host = os.environ.get('APP_HOST')
-app_port = os.environ.get('APP_PORT')
-local_host = os.environ.get("HOST")
 
-conn = psycopg2.connect(f"user={user_name} dbname={database_name}  host={app_host} port={app_port} password={password} ")
+conn = connect_db()
 cursor = conn.cursor()
 
     # cursor.execute("""
@@ -41,6 +33,7 @@ def create_categories():
 app = Flask(__name__)
 app.register_blueprint(routes.category)
 app.register_blueprint(routes.company)
+app.register_blueprint(routes.product)
 app.register_blueprint(routes.warranty)
 
 if __name__ == '__main__':
