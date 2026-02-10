@@ -40,6 +40,8 @@ def create_categories():
 
 app = Flask(__name__)
 app.register_blueprint(routes.category)
+app.register_blueprint(routes.company)
+app.register_blueprint(routes.warranty)
 
 if __name__ == '__main__':
   create_categories()

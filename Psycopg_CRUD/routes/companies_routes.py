@@ -22,9 +22,9 @@ def get_company_by_id_route(company_id):
 
 @company.route('/company/<company_id>', methods=['PUT'])
 def update_company_route(company_id):
-  return controllers.update_company_by_id(company_id)
+  return controllers.update_company(company_id)
 
 
 @company.route('/company/delete/<company_id>', methods=['DELETE'])
 def delete_company_route(company_id):
-  return controllers.delete_company_(company_id)
+  return controllers.delete_company(company_id)

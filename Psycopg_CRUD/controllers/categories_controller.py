@@ -58,3 +58,80 @@ def get_all_categories():
     record_list.append(record)
 
   return jsonify({"message": "categories found", "results" : record_list}), 200 
+
+
+def get_category_by_id(category_id):
+  result = cursor.execute("""
+    SELECT * FROM Categories
+    WHERE category_id = %s
+  """,(category_id,))
+  result = cursor.fetchone()
+
+  if result:
+    return jsonify({"message": "Category found", "results": result}), 200
+  else:
+    return jsonify({"message": "Category not found"}), 404
+  
+
+
+def update_category(category_id):
+  put_data = request.form if request.form else request.get_json()
+  category_name = put_data.get("category_name")
+
+  result = cursor.execute("""
+    SELECT * FROM Categories
+    WHERE category_id = %s
+  """,(category_id,))
+
+  result = cursor.fetchone()
+
+  if not result:
+    return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
+  
+  if not category_name:
+    return jsonify({"message": "category_name is required"}), 400
+  
+  result = cursor.execute("""
+    SELECT * FROM Categories
+    WHERE category_name = %s
+  """,(category_name,))
+
+  result = cursor.fetchone()
+
+  if result:
+    return jsonify({"message": 'Category already exists'}), 400
+  
+
+
+  result = cursor.execute("""
+    UPDATE Categories 
+    SET category_name = %s
+    WHERE category_id = %s
+  """, (category_name, category_id))
+  conn.commit()
+  
+  return jsonify({"message": "Category updated", "results": category_name}), 200
+
+
+def delete_category(category_id):
+  result = cursor.execute("""
+    SELECT * FROM Categories
+    WHERE category_id = %s
+    """,(category_id,))
+
+  result = cursor.fetchone()
+
+  if not result:
+    return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
+  
+    # DELETE FROM ProductsCategoriesXref
+    # WHERE category_id = %s;
+  result = cursor.execute("""
+    DELETE FROM Categories
+    WHERE category_id = %s;
+  """, (category_id, category_id))
+  conn.commit()
+
+  return jsonify({"message": "Category deleted"}), 200
+
+
