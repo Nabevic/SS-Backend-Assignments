@@ -106,23 +106,29 @@ def update_category(category_id):
 
 def delete_category(category_id):
   result = cursor.execute("""
-    SELECT * FROM Categories
-    WHERE category_id = %s
+    SELECT * FROM Categories c
+    LEFT JOIN ProductsCategoriesXref pcx
+    ON c.category_id = pcx.category_id
+    WHERE c.category_id = %s
     """,(category_id,))
 
-  result = cursor.fetchone()
+  result = cursor.fetchall()
 
+  
   if not result:
     return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
   
-    # DELETE FROM ProductsCategoriesXref
-    # WHERE category_id = %s;
+  deleted_records = result
+  
   result = cursor.execute("""
+    DELETE FROM ProductsCategoriesXref
+    WHERE category_id = %s;
+                          
     DELETE FROM Categories
     WHERE category_id = %s;
   """, (category_id, category_id))
   conn.commit()
 
-  return jsonify({"message": "Category deleted"}), 200
+  return jsonify({"message": "Category and associations deleted","result": deleted_records}), 200
 
 

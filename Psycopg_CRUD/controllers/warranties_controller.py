@@ -26,6 +26,7 @@ def get_warranty_by_id(warranty_id):
     WHERE warranty_id = %s;
   """,(warranty_id,))
   result = cursor.fetchone()
+  # This doesn't show the column names, just the values. add something to see them
 
   if result:
     return jsonify({"message": "warranty found", "results": result}), 200
@@ -71,10 +72,8 @@ def delete_warranty(warranty_id):
   if not result:
     return jsonify({"message": "Incorrect ID. Unable to find warranty"}), 404
   
-  deleted_warranty = cursor
-  
-    # DELETE FROM ProductsCompaniesXref
-    # WHERE warranty_id = %s;
+  deleted_warranty = result
+  # this technically works, but you don't see the column names
   result = cursor.execute("""
     DELETE FROM Warranties
     WHERE warranty_id = %s;

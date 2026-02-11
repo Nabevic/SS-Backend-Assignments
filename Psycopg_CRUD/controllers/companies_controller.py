@@ -115,12 +115,16 @@ def delete_company(company_id):
   if not result:
     return jsonify({"message": "Incorrect ID. Unable to find company"}), 404
   
-    # DELETE FROM ProductsCompaniesXref
-    # WHERE company_id = %s;
+  deleted_company = result
+  
   result = cursor.execute("""
+    UPDATE Products
+    SET company_id = NULL
+    WHERE company_id = %s;
+                                                
     DELETE FROM Companies
     WHERE company_id = %s;
-  """, (company_id, ))
+  """, (company_id, company_id ))
   conn.commit()
 
-  return jsonify({"message": "company deleted"}), 200
+  return jsonify({"message": "company deleted","result": deleted_company}), 200

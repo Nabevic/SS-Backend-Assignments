@@ -63,12 +63,18 @@ def add_product_category_association():
   """, (product_id, category_id))
   conn.commit()
 
-  return jsonify({"message":"Association added"}), 201
+  return jsonify({"message":"Association added","result": result}), 201
 
 
 def get_all_products():
   result = cursor.execute("""
-    SELECT * FROM Products;
+     SELECT p.*, c.category_id, c.category_name, w.warranty_id, w.warranty_months FROM Products p
+    LEFT JOIN ProductsCategoriesXref pcx
+      ON p.product_id = pcx.product_id
+    LEFT JOIN Categories c
+      ON c.category_id = pcx.category_id
+    LEFT JOIN Warranties w 
+      ON p.product_id = w.product_id;
   """)
 
   result = cursor.fetchall()
@@ -77,12 +83,16 @@ def get_all_products():
 
   for record in result:
     record = {
-      'product_id': record[0],
+       'product_id': record[0],
       'product_name' : record[1],
       'company_id': record[2],
       'description' : record[3],
       'price' : record[4],
       'active' : record[5],
+      'category_id': record[6],
+      'category_name' : record[7],
+      'warranty_id' : record[8],
+      'warranty_months' : record[9]
     }
 
     record_list.append(record)
@@ -112,3 +122,109 @@ def get_active_products():
     record_list.append(record)
 
   return jsonify({"message": "Active products found", "results" : record_list}), 200 
+
+
+def get_product_by_id(product_id):
+  result = cursor.execute("""
+    SELECT p.*, c.category_id, c.category_name, w.warranty_id, w.warranty_months FROM Products p
+    LEFT JOIN ProductsCategoriesXref pcx
+      ON p.product_id = pcx.product_id
+    LEFT JOIN Categories c
+      ON c.category_id = pcx.category_id
+    LEFT JOIN Warranties w 
+      ON p.product_id = w.product_id  
+    WHERE p.product_id = %s;
+  """, (product_id,))
+  result = cursor.fetchone()
+  if result:
+    record = {
+      'product_id': result[0],
+      'product_name' : result[1],
+      'company_id': result[2],
+      'description' : result[3],
+      'price' : result[4],
+      'active' : result[5],
+      'category_id': result[6],
+      'category_name' : result[7],
+      'warranty_id' : result[8],
+      'warranty_months' : result[9]
+    }
+    return jsonify({"message": "Product found", "results": record}), 200
+  else:
+    return jsonify({"message": "Product not found"}), 404
+
+  
+
+def get_product_by_company(company_id):
+  result = cursor.execute("""
+    SELECT * FROM Products
+    WHERE company_id = %s;
+  """, (company_id,))
+  result = cursor.fetchall()
+
+  if result:
+    return jsonify({"message": "Products found","results": result}), 200
+  else:
+    return jsonify({"message": "Products not found"}), 404
+  
+
+def update_product(product_id):
+  put_data = request.form if request.form else request.json
+  product = {}
+  product['company_id'] = put_data['company_id']
+  product['product_name'] = put_data['product_name']
+  product['description'] = put_data['description']
+  product['price'] = put_data['price']
+
+  result = cursor.execute("""
+    SELECT * FROM Products
+    WHERE product_id = %s;
+  """,(product_id,))
+
+  result = cursor.fetchone()
+
+  if not result:
+    return jsonify({"message": "Incorrect ID. Unable to find product"}), 404
+  
+  result = cursor.execute("""
+    UPDATE Products 
+    SET company_id = %s,
+    product_name = %s,
+    description = %s,
+    price = %s
+    WHERE product_id = %s;
+  """, (product['company_id'], product['product_name'], product['description'], product['price'], product_id))
+  conn.commit()
+  
+  return jsonify({"message": "Product updated", "results": product}), 200
+
+
+def delete_product(product_id):
+  result = cursor.execute("""
+    SELECT * FROM Products p
+    LEFT JOIN Warranties w
+      ON p.product_id = w.product_id
+    LEFT JOIN ProductsCategoriesXref pcx
+      ON p.product_id = pcx.product_id
+    WHERE p.product_id = %s;
+    """,(product_id,))
+
+  result = cursor.fetchall()
+
+  if not result:
+    return jsonify({"message": "Incorrect ID. Unable to find Product"}), 404
+  
+  deleted_product = result
+  result = cursor.execute("""
+    DELETE FROM Warranties
+    WHERE product_id = %s;
+    
+    DELETE FROM ProductsCategoriesXref
+    WHERE product_id = %s;
+                                                
+    DELETE FROM Products
+    WHERE product_id = %s;
+  """, (product_id, product_id, product_id))
+  conn.commit()
+
+  return jsonify({"message": "Product deleted","results": deleted_product}), 200
