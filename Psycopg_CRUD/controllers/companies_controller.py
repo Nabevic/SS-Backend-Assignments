@@ -22,14 +22,20 @@ def add_company():
   if result:
     return jsonify({"message": 'company already exists'}), 400
   
-  cursor.execute("""
-    INSERT INTO Companies
-      (company_name)
-      VALUES(%s)
-  """, (company_name,))  
+  try:
+    cursor.execute("""
+      INSERT INTO Companies
+        (company_name)
+        VALUES(%s)
+    """, (company_name,))  
+    
+    conn.commit()
+
+  except:
+      cursor.rollback()
+      return jsonify({"message": "Company could not be added"}), 400
   
-  conn.commit()
-  return jsonify({"message": f"company {company_name} added to Database"}), 201
+  return jsonify({"message": f"Company {company_name} added to Database"}), 201
 
 
 def get_all_companies():
@@ -52,54 +58,59 @@ def get_all_companies():
   return jsonify({"message": "companies found", "results" : record_list}), 200
 
 
-def get_company_by_id(company_id):
-  result = cursor.execute("""
-    SELECT * FROM Companies
-    WHERE company_id = %s
-  """,(company_id,))
-  result = cursor.fetchone()
+def company_by_id(company_id):
+  if request.method == 'GET':
 
-  if result:
-    return jsonify({"message": "Company found", "results": result}), 200
-  else:
-    return jsonify({"message": "Company not found"}), 404
+    result = cursor.execute("""
+      SELECT * FROM Companies
+      WHERE company_id = %s
+    """,(company_id,))
+    result = cursor.fetchone()
+
+    if result:
+      return jsonify({"message": "Company found", "results": result}), 200
+    else:
+      return jsonify({"message": "Company not found"}), 404
+    
+  elif request.method == 'PUT':
+    put_data = request.form if request.form else request.get_json()
+    company_name = put_data.get("company_name")
+
+    result = cursor.execute("""
+      SELECT * FROM Companies
+      WHERE company_id = %s
+    """,(company_id,))
+
+    result = cursor.fetchone()
+
+    if not result:
+      return jsonify({"message": "Incorrect ID. Unable to find company"}), 404
+    
+    if not company_name:
+      return jsonify({"message": "company_name is required"}), 400
+    
+    result = cursor.execute("""
+      SELECT * FROM Companies
+      WHERE company_name = %s
+    """,(company_name,))
+
+    result = cursor.fetchone()
+
+    if result:
+      return jsonify({"message": 'Company already exists'}), 400
   
 
-def update_company(company_id):
-  put_data = request.form if request.form else request.get_json()
-  company_name = put_data.get("company_name")
+  try:
+    result = cursor.execute("""
+      UPDATE Companies 
+      SET company_name = %s
+      WHERE company_id = %s
+    """, (company_name, company_id))
+    conn.commit()
 
-  result = cursor.execute("""
-    SELECT * FROM Companies
-    WHERE company_id = %s
-  """,(company_id,))
-
-  result = cursor.fetchone()
-
-  if not result:
-    return jsonify({"message": "Incorrect ID. Unable to find company"}), 404
-  
-  if not company_name:
-    return jsonify({"message": "company_name is required"}), 400
-  
-  result = cursor.execute("""
-    SELECT * FROM Companies
-    WHERE company_name = %s
-  """,(company_name,))
-
-  result = cursor.fetchone()
-
-  if result:
-    return jsonify({"message": 'Company already exists'}), 400
-  
-
-
-  result = cursor.execute("""
-    UPDATE Companies 
-    SET company_name = %s
-    WHERE company_id = %s
-  """, (company_name, company_id))
-  conn.commit()
+  except:
+      cursor.rollback()
+      return jsonify({"message": "Company could not be updated"}), 400
   
   return jsonify({"message": "Company updated", "results": company_name}), 200
 
@@ -117,14 +128,19 @@ def delete_company(company_id):
   
   deleted_company = result
   
-  result = cursor.execute("""
-    UPDATE Products
-    SET company_id = NULL
-    WHERE company_id = %s;
-                                                
-    DELETE FROM Companies
-    WHERE company_id = %s;
-  """, (company_id, company_id ))
-  conn.commit()
+  try:
+    result = cursor.execute("""
+      UPDATE Products
+      SET company_id = NULL
+      WHERE company_id = %s;
+                                                  
+      DELETE FROM Companies
+      WHERE company_id = %s;
+    """, (company_id, company_id ))
+    conn.commit()
+  
+  except:
+      cursor.rollback()
+      return jsonify({"message": "Company could not be deleted"}), 400
 
   return jsonify({"message": "company deleted","result": deleted_company}), 200

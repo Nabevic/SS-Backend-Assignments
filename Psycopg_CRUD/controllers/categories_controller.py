@@ -22,13 +22,18 @@ def add_category():
   if result:
     return jsonify({"message": 'Category already exists'}), 400
   
-  cursor.execute("""
-    INSERT INTO Categories
-      (category_name)
-      VALUES(%s)
-  """, (category_name,))  
+  try:
+    cursor.execute("""
+      INSERT INTO Categories
+        (category_name)
+        VALUES(%s)
+    """, (category_name,))  
+    
+    conn.commit()
+  except:
+    cursor.rollback()
+    return jsonify({"message": "Category could not be added"}), 400
   
-  conn.commit()
   return jsonify({"message": f"Category {category_name} added to Database"}), 201
 
 def get_all_categories():
@@ -51,57 +56,58 @@ def get_all_categories():
   return jsonify({"message": "categories found", "results" : record_list}), 200 
 
 
-def get_category_by_id(category_id):
-  result = cursor.execute("""
-    SELECT * FROM Categories
-    WHERE category_id = %s
-  """,(category_id,))
-  result = cursor.fetchone()
+def category_by_id(category_id):
+  if request.method == 'GET':
+    result = cursor.execute("""
+      SELECT * FROM Categories
+      WHERE category_id = %s
+    """,(category_id,))
+    result = cursor.fetchone()
 
-  if result:
-    return jsonify({"message": "Category found", "results": result}), 200
-  else:
-    return jsonify({"message": "Category not found"}), 404
+    if result:
+      return jsonify({"message": "Category found", "results": result}), 200
+    else:
+      return jsonify({"message": "Category not found"}), 404
   
+  elif request.method == 'PUT':
+    put_data = request.form if request.form else request.get_json()
+    category_name = put_data.get("category_name")
 
+    result = cursor.execute("""
+      SELECT * FROM Categories
+      WHERE category_id = %s
+    """,(category_id,))
 
-def update_category(category_id):
-  put_data = request.form if request.form else request.get_json()
-  category_name = put_data.get("category_name")
+    result = cursor.fetchone()
 
-  result = cursor.execute("""
-    SELECT * FROM Categories
-    WHERE category_id = %s
-  """,(category_id,))
+    if not result:
+      return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
+    
+    if not category_name:
+      return jsonify({"message": "category_name is required"}), 400
+    
+    result = cursor.execute("""
+      SELECT * FROM Categories
+      WHERE category_name = %s
+    """,(category_name,))
 
-  result = cursor.fetchone()
+    result = cursor.fetchone()
 
-  if not result:
-    return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
+    if result:
+      return jsonify({"message": 'Category already exists'}), 400
   
-  if not category_name:
-    return jsonify({"message": "category_name is required"}), 400
-  
-  result = cursor.execute("""
-    SELECT * FROM Categories
-    WHERE category_name = %s
-  """,(category_name,))
-
-  result = cursor.fetchone()
-
-  if result:
-    return jsonify({"message": 'Category already exists'}), 400
-  
-
-
-  result = cursor.execute("""
-    UPDATE Categories 
-    SET category_name = %s
-    WHERE category_id = %s
-  """, (category_name, category_id))
-  conn.commit()
-  
-  return jsonify({"message": "Category updated", "results": category_name}), 200
+    try:
+      result = cursor.execute("""
+        UPDATE Categories 
+        SET category_name = %s
+        WHERE category_id = %s
+      """, (category_name, category_id))
+      conn.commit()
+    except:
+      cursor.rollback()
+      return jsonify({"message": "Category could not be updated"}), 400
+    
+    return jsonify({"message": "Category updated", "results": category_name}), 200
 
 
 def delete_category(category_id):
@@ -110,7 +116,7 @@ def delete_category(category_id):
     LEFT JOIN ProductsCategoriesXref pcx
     ON c.category_id = pcx.category_id
     WHERE c.category_id = %s
-    """,(category_id,))
+  """,(category_id,))
 
   result = cursor.fetchall()
 
@@ -120,14 +126,18 @@ def delete_category(category_id):
   
   deleted_records = result
   
-  result = cursor.execute("""
-    DELETE FROM ProductsCategoriesXref
-    WHERE category_id = %s;
-                          
-    DELETE FROM Categories
-    WHERE category_id = %s;
-  """, (category_id, category_id))
-  conn.commit()
+  try:
+    result = cursor.execute("""
+      DELETE FROM ProductsCategoriesXref
+      WHERE category_id = %s;
+                            
+      DELETE FROM Categories
+      WHERE category_id = %s;
+    """, (category_id, category_id))
+    conn.commit()
+  except:
+      cursor.rollback()
+      return jsonify({"message": "Category could not be deleted"}), 400
 
   return jsonify({"message": "Category and associations deleted","result": deleted_records}), 200
 
