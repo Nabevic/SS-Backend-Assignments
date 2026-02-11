@@ -165,6 +165,7 @@ def product_by_id(product_id):
     product['product_name'] = put_data['product_name']
     product['description'] = put_data['description']
     product['price'] = put_data['price']
+    product['active'] = put_data['active']
 
     result = cursor.execute("""
       SELECT * FROM Products
@@ -182,9 +183,10 @@ def product_by_id(product_id):
         SET company_id = %s,
         product_name = %s,
         description = %s,
-        price = %s
+        price = %s,
+        active = %s
         WHERE product_id = %s;
-      """, (product['company_id'], product['product_name'], product['description'], product['price'], product_id))
+      """, (product['company_id'], product['product_name'], product['description'], product['price'], product['active'], product_id))
       conn.commit()
 
     except:
