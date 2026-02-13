@@ -9,20 +9,40 @@ def add_warranty():
 
   warranty_months = post_data.get('warranty_months')
   product_id = post_data.get('product_id')
+
+  cursor.execute("""
+      Select product_id FROM Products
+        WHERE product_id = %s
+      """, (product_id,))
+  result = cursor.fetchone()
+  if not result:
+    return jsonify({"message":"Invalid product_id. Product not found"}), 404
   
   try:
     cursor.execute("""
       INSERT INTO Warranties
-        (product_id, warranty_months )
+        (product_id, warranty_months)
         VALUES(%s, %s);
     """, (product_id, warranty_months))  
+
+  except Exception as e:
+    cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Warranty could not be added. {e}"}), 400
+  else:
     conn.commit()
+    cursor.execute("""
+      Select * FROM Warranties
+        WHERE product_id = %s AND warranty_months = %s
+    """, (product_id, warranty_months))
+    result = cursor.fetchone()
+    if result:
+      record = {
+        "warranty_id": result[0],
+        "product_id": result[1],
+        "warranty_months": result[2]
+      }
 
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Warranty could not be added"}), 400
-
-  return jsonify({"message": f"warranty for {warranty_months} months added to product"}), 201
+  return jsonify({"message": f"Warranty added","result": record }), 201
 
 
 def warranty_by_id(warranty_id):
@@ -33,8 +53,14 @@ def warranty_by_id(warranty_id):
     """,(warranty_id,))
     result = cursor.fetchone()
 
+
     if result:
-      return jsonify({"message": "warranty found", "results": result}), 200
+      record = {
+        "warranty_id": result[0],
+        "product_id": result[1],
+        "warranty_months": result[2]
+      }
+      return jsonify({"message": "warranty found", "results": record}), 200
     else:
       return jsonify({"message": "warranty not found"}), 404
   
@@ -61,13 +87,17 @@ def warranty_by_id(warranty_id):
         SET warranty_months = %s
         WHERE warranty_id = %s;
       """, (warranty_months, warranty_id))
-      conn.commit()
 
-    except:
-      cursor.rollback()
-      return jsonify({"message": "Warranty could not be updated"}), 400
+    except Exception as e:
+      result = cursor.execute("ROLLBACK;")
+      return jsonify({"message": f"Error: Warranty could not be updated. {e}"}), 400
+    else:
+      conn.commit()
+      updated_record = {
+        "warranty_months": warranty_months
+      }
     
-    return jsonify({"message": "warranty updated", "results": warranty_months}), 200
+    return jsonify({"message": "warranty updated", "results": updated_record}), 200
 
 
 def delete_warranty(warranty_id):
@@ -81,17 +111,22 @@ def delete_warranty(warranty_id):
   if not result:
     return jsonify({"message": "Incorrect ID. Unable to find warranty"}), 404
   
-  deleted_warranty = result
+  deleted_record = {
+        "warranty_id": result[0],
+        "product_id": result[1],
+        "warranty_months": result[2]
+      }
 
   try:
     result = cursor.execute("""
       DELETE FROM Warranties
       WHERE warranty_id = %s;
     """, (warranty_id, ))
+
+  except Exception as e:
+    result = cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Warranty could not be deleted. {e}"}), 400
+  else:
     conn.commit()
 
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Warranty could not be deleted"}), 400
-
-  return jsonify({"message": "warranty deleted","results": deleted_warranty}), 200
+  return jsonify({"message": "warranty deleted","results": deleted_record}), 200

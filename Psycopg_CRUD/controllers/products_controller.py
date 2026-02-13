@@ -32,7 +32,7 @@ def add_product():
   result = cursor.fetchone()
 
   if result:
-    return jsonify({"message": 'Product name already exists. Product name must be unique',"results": result}), 400
+    return jsonify({"message": 'Product name already exists. Product name must be unique'}), 400
   
   try:
     result = cursor.execute("""
@@ -40,11 +40,12 @@ def add_product():
       (company_id, product_name, price, description, active)
       VALUES(%s,%s,%s,%s,%s)
     """,(product['company_id'], product['product_name'], product['price'], product['description'], product['active']))
-    conn.commit()
 
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Product could not be added"}), 400
+  except Exception as e:
+    result = cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Product could not be added. {e}"}), 400
+  else:
+    conn.commit()
 
   return jsonify({"message": "product added", "result": product}), 201
 
@@ -52,22 +53,50 @@ def add_product():
 def add_product_category_association():
   post_data = request.form if request.form else request.json
 
-  product_id = post_data['product_id']
-  category_id = post_data['category_id']
+  if not post_data['product_id']:
+    return jsonify({"message": "product_id required"}), 400
+  
+  elif not post_data['category_id']:
+    return jsonify({"message": "product_id required"}), 400
+  else:
+    product_id = post_data['product_id']
+    category_id = post_data['category_id']
+
+  cursor.execute("""
+    SELECT product_id FROM Products
+    WHERE product_id = %s
+  """, (product_id,))
+  result = cursor.fetchone()
+  if not result:
+    return jsonify({"message": "Unable to add Association. Product not found"}), 404
+  
+  cursor.execute("""
+    SELECT category_id FROM Categories
+    WHERE category_id = %s
+  """, (category_id,))
+  result = cursor.fetchone()
+  if not result:
+    return jsonify({"message": "Unable to add Association. Category not found"}), 404
 
   try:
     result = cursor.execute("""
       INSERT INTO ProductsCategoriesXref
       (product_id, category_id)
-      VALUES(%s,%s)
+      VALUES(%s,%s);
     """, (product_id, category_id))
+
+  except Exception as e:
+    result = cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Unable to add Association. {e}"}), 400
+  else:
     conn.commit()
 
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Association could not be added"}), 400
+    record = {
+      "product_id": product_id,
+      "category_id": category_id
+    }
 
-  return jsonify({"message":"Association added","result": result}), 201
+  return jsonify({"message":"Association added","result": record}), 201
 
 
 def get_all_products():
@@ -82,6 +111,9 @@ def get_all_products():
   """)
 
   result = cursor.fetchall()
+
+  if not result:
+    return jsonify({"message": "No products found"}), 404
 
   record_list = []
 
@@ -111,8 +143,10 @@ def get_active_products():
 
   result = cursor.fetchall()
 
+  if not result:
+    return jsonify({"message": "No active products found"}), 404
+  
   record_list = []
-
   for record in result:
     record = {
       'product_id': record[0],
@@ -187,11 +221,12 @@ def product_by_id(product_id):
         active = %s
         WHERE product_id = %s;
       """, (product['company_id'], product['product_name'], product['description'], product['price'], product['active'], product_id))
-      conn.commit()
 
-    except:
-      cursor.rollback()
-      return jsonify({"message": "Product could not be updated"}), 400
+    except Exception as e:
+      result = cursor.execute("ROLLBACK;")
+      return jsonify({"message": f"Error: Product could not be updated. {e}"}), 400
+    else:
+      conn.commit()
     
     return jsonify({"message": "Product updated", "results": product}), 200
 
@@ -204,14 +239,26 @@ def get_product_by_company(company_id):
   result = cursor.fetchall()
 
   if result:
-    return jsonify({"message": "Products found","results": result}), 200
+
+    record_list = []
+    for record in result:
+      record = {
+        "product_id" : record[0],
+        "company_id" : record[1],
+        "company_name" : record[2],
+        "price" : record[3],
+        "description" : record[4],
+        "active" : record[5]
+      }
+      record_list.append(record)
+    return jsonify({"message": "Products found","results": record_list}), 200
   else:
     return jsonify({"message": "Products not found"}), 404
   
 
 def delete_product(product_id):
   result = cursor.execute("""
-    SELECT * FROM Products p
+    SELECT p.*, w.warranty_id, w.warranty_months, pcx.* FROM Products p
     LEFT JOIN Warranties w
       ON p.product_id = w.product_id
     LEFT JOIN ProductsCategoriesXref pcx
@@ -219,12 +266,27 @@ def delete_product(product_id):
     WHERE p.product_id = %s;
     """,(product_id,))
 
-  result = cursor.fetchall()
+  result = cursor.fetchone()
 
   if not result:
-    return jsonify({"message": "Incorrect ID. Unable to find Product"}), 404
+    return jsonify({"message": "Incorrect id. Unable to find product"}), 404
   
-  deleted_product = result
+  deleted_product = {
+        "product_id" : result[0],
+        "company_id" : result[1],
+        "company_name" : result[2],
+        "price" : result[3],
+        "description" : result[4],
+        "active" : result[5],
+        "Warranties" : {
+        "warranty_id" : result[6],
+        "warranty_months" : result[7],
+        },
+        "ProductsCategoriesXref": {
+          "product_id" : result[8],
+          "category_id" : result[9]
+        }
+  }
 
   try:
     result = cursor.execute("""
@@ -237,10 +299,11 @@ def delete_product(product_id):
       DELETE FROM Products
       WHERE product_id = %s;
     """, (product_id, product_id, product_id))
+
+  except Exception as e:
+    result = cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Product could not be deleted. {e}"}), 400
+  else:
     conn.commit()
 
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Product could not be Deleted"}), 400
-
-  return jsonify({"message": "Product deleted","results": deleted_product}), 200
+  return jsonify({"message": "Product and associations deleted","results": deleted_product}), 200

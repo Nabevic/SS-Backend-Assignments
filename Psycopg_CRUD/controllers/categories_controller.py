@@ -29,10 +29,11 @@ def add_category():
         VALUES(%s)
     """, (category_name,))  
     
+  except Exception as e:
+    result = cursor.execute("ROLLBACK;")
+    return jsonify({"message": f"Error: Category could not be added. {e}"}), 400
+  else:
     conn.commit()
-  except:
-    cursor.rollback()
-    return jsonify({"message": "Category could not be added"}), 400
   
   return jsonify({"message": f"Category {category_name} added to Database"}), 201
 
@@ -65,7 +66,12 @@ def category_by_id(category_id):
     result = cursor.fetchone()
 
     if result:
-      return jsonify({"message": "Category found", "results": result}), 200
+      record = {
+        'category_id': result[0],
+        'category_name': result[1]
+      }
+      return jsonify({"message": "Category found", "results": record}), 200
+    
     else:
       return jsonify({"message": "Category not found"}), 404
   
@@ -102,12 +108,13 @@ def category_by_id(category_id):
         SET category_name = %s
         WHERE category_id = %s
       """, (category_name, category_id))
+    except Exception as e:
+      result = cursor.execute("ROLLBACK;")
+      return jsonify({"message": f"Error: Category could not be updated. {e}"}), 400
+    else:
       conn.commit()
-    except:
-      cursor.rollback()
-      return jsonify({"message": "Category could not be updated"}), 400
     
-    return jsonify({"message": "Category updated", "results": category_name}), 200
+    return jsonify({"message": "Category name updated", "results": category_name}), 200
 
 
 def delete_category(category_id):
@@ -124,7 +131,30 @@ def delete_category(category_id):
   if not result:
     return jsonify({"message": "Incorrect ID. Unable to find Category"}), 404
   
-  deleted_records = result
+  record_list = []
+  for record in result:
+    if not record_list:
+      first_record = {
+        "categories": {
+        "category_id": record[0],
+        "category_name": record[1]
+        }
+      }
+      record = {
+        "productscategoriesxref": {
+        "product_id": record[2],
+        "category_id": record[3]
+        }
+      }
+      record_list.append(first_record)
+    else: 
+      record = {
+        "productscategoriesxref": {
+        "product_id": record[2],
+        "category_id": record[3]
+        }
+      }
+    record_list.append(record)
   
   try:
     result = cursor.execute("""
@@ -134,11 +164,12 @@ def delete_category(category_id):
       DELETE FROM Categories
       WHERE category_id = %s;
     """, (category_id, category_id))
+  except Exception as e:
+      result = cursor.execute("ROLLBACK;")
+      return jsonify({"message": f"Error: Category could not be deleted. {e}"}), 400
+  else:
     conn.commit()
-  except:
-      cursor.rollback()
-      return jsonify({"message": "Category could not be deleted"}), 400
 
-  return jsonify({"message": "Category and associations deleted","result": deleted_records}), 200
+  return jsonify({"message": "Category and associations deleted","result": record_list}), 200
 
 
