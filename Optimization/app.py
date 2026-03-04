@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 import psycopg2
 from flask_marshmallow import Marshmallow
 import os
@@ -6,10 +6,6 @@ import os
 from db import *
 from util.blueprints import register_blueprints
 from util.reflection import populate_object
-  # Updated import from models to include the schema pairs  
-from models.company import Companies, company_schema, companies_schema
-from models.category import Categories, category_schema, categories_schema
-from models.product import Products, product_schema, products_schema
 
 flask_host = os.environ.get("FLASK_HOST")
 flask_port = os.environ.get("FLASK_PORT")
@@ -23,14 +19,12 @@ database_name = os.environ.get("DATABASE_NAME")
 
 app = Flask(__name__)
 
-register_blueprints(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = f"{database_scheme}{database_user}:{database_password}@{database_address}:{database_port}/{database_name}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 init_db(app, db)
-
-    # Instantiated Marshmallow class object
+register_blueprints(app)
 ma = Marshmallow(app)
 
 def create_tables():
@@ -39,7 +33,6 @@ def create_tables():
         db.create_all()
         print("Tables created successfully")
 
-create_tables()
 
 if __name__ == '__main__':
     create_tables()

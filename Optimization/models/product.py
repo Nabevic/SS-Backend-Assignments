@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import marshmallow as ma
 
 from db import db
-from .product_category_xref import product_category_association_table
+from .product_category_xref import products_categories_association_table
 
 
 class Products(db.Model):
@@ -16,19 +16,20 @@ class Products(db.Model):
     description = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True)
 
-    company = db.relationship("Companies", foreign_keys='[Products.company_id]', back_populates='products')
-    categories = db.relationship("Categories", secondary=product_category_association_table, back_populates='products')
-    warranty = db.relationship("Warranties", foreign_keys='[Warranties.product_id]', back_populates='product', uselist=False, cascade='all')
+    companies = db.relationship("Companies", foreign_keys='[Products.company_id]', back_populates='products')
+    categories = db.relationship("Categories", secondary=products_categories_association_table, back_populates='products')
+    warranties = db.relationship("Warranties", foreign_keys='[Warranties.product_id]', back_populates='products', uselist=False, cascade='all')
 
-    def __init__(self, product_name, description, price, company_id, active=True):
-        self.product_name = product_name
-        self.description = description
-        self.price = price
+    def __init__(self, company_id, product_name, price, description, active=True):
         self.company_id = company_id
+        self.product_name = product_name
+        self.price = price
+        self.description = description
         self.active = active
 
     def new_product_obj():
         return Products('','',0,'', True)
+
 
 class ProductsSchema(ma.Schema):
     class Meta:
@@ -36,5 +37,7 @@ class ProductsSchema(ma.Schema):
         company = ma.fields.Nested("CompaniesSchema", exclude=['products'])
         categories = ma.fields.Nested("CategoriesSchema", many=True, exclude=['products'])
         warranty = ma.fields.Nested("WarrantiesSchema", exclude=['product'])
+        
+        
 product_schema = ProductsSchema()
 products_schema = ProductsSchema(many=True)

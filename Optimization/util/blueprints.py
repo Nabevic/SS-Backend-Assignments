@@ -1,4 +1,6 @@
+from flask import Flask
 import routes
+
 
 
 def register_blueprints(app):

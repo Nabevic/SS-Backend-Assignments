@@ -10,7 +10,7 @@ class Companies(db.Model):
   company_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
   company_name = db.Column(db.String(), nullable=False, unique=True)
 
-  products = db.relationship("Products", foreign_keys="[Products.company_id]", back_populates='company', cascade="all")
+  products = db.relationship("Products", foreign_keys="[Products.company_id]", back_populates='companies', cascade="all")
 
   def __init__(self, company_name):
     self.company_name = company_name
@@ -18,7 +18,6 @@ class Companies(db.Model):
   def new_company_obj():
     return Companies('')
   
-
 
 class CompaniesSchema(ma.Schema):
   class Meta:

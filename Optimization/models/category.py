@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import marshmallow as ma
 
 from db import db
-from .product_category_xref import product_category_association_table
+from .product_category_xref import products_categories_association_table
 
 class Categories(db.Model):
   __tablename__ = "Categories"
@@ -11,7 +11,7 @@ class Categories(db.Model):
   category_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
   category_name = db.Column(db.String(), nullable=False, unique=True)
 
-  products = db.relationship("Products", secondary=product_category_association_table, back_populates='category', cascade="all")
+  products = db.relationship("Products", secondary=products_categories_association_table, back_populates='categories', cascade="all")
 
   def __init__(self, category_name):
     self.category_name = category_name
@@ -19,7 +19,6 @@ class Categories(db.Model):
   def new_category_obj():
     return Categories('')
   
-
 
 class CategoriesSchema(ma.Schema):
   class Meta:
