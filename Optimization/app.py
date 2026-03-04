@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-import pyscopg2
+import psycopg2
 from flask_marshmallow import Marshmallow
 import os
 

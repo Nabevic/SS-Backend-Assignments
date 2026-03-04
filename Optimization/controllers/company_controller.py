@@ -5,7 +5,7 @@ from util.reflection import populate_object
 from db import db
 
 
-def add_company(request):
+def add_company():
   post_data = request.form if request.form else request.json
 
   new_company = Companies.new_company_obj()
@@ -14,13 +14,13 @@ def add_company(request):
   db.session.add(new_company)
   db.session.commit()
 
-  return jsonify({"message":"company create","result": company_schema.dump(new_company)}), 201
+  return jsonify({"message": "company created","result": company_schema.dump(new_company)}), 201
 
 
 def get_all_companies():
   companies_query = db.session.query(Companies).all()
 
-  return jsonify({"message":"companies retrieved", "result": companies_schema.dump(companies_query)}), 200
+  return jsonify({"message": "companies retrieved", "result": companies_schema.dump(companies_query)}), 200
 
 def update_company_by_id(company_id):
   post_data = request.form if request.form else request.json
