@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 
 from db import db
 from models.wizards import Wizards
+from models.spells import Spells
 
 def construct_record(query):
   wizard_record = {
@@ -60,48 +61,50 @@ def add_wizard_specialization():
       return jsonify({"message":f"{field} is required"}), 400
     values[field] = field_data
   
-  product_query = db.session.query(Products).filter(Products.product_id == values['product_id']).first()
-  category_query = db.session.query(Categories).filter(Categories.category_id == values['category_id']).first()
+  wizard_query = db.session.query(Wizards).filter(Wizards.wizard_id == values['wizard_id']).first()
+  spell_query = db.session.query(Spells).filter(Spells.spell_id == values['spell_id']).first()
 
-  if not product_query:
-    return jsonify({"message":"product id does not exist"}), 404
+  if not wizard_query:
+    return jsonify({"message":"wizard id does not exist"}), 404
   
-  elif not category_query:
-    return jsonify({"message":"category id does not exist"}), 404
+  elif not spell_query:
+    return jsonify({"message":"spell id does not exist"}), 404
 
-  if product_query and category_query:
+  if wizard_query and spell_query:
 
     try:
-      product_query.categories.append(category_query)
+      wizard_query.spells.append(spell_query)
       db.session.commit()
 
     except Exception as e:
       db.session.rollback()
-      return jsonify({"message": f"could not add association. {e}"}), 400
+      return jsonify({"message": f"could not add specialization. {e}"}), 400
 
-    categories_list = []
+    spells_list = []
     
-    for category in product_query.categories:
-      categories_list.append({
-        "category_id": category.category_id,
-        "category_name": category.category_name
+    for spell in wizard_query.spells:
+      spells_list.append({
+        "spell_id": spell.spell_id,
+        "spell_name": spell.spell_name,
+        "incantation": spell.incantation,
+        "difficulty_level": spell.difficulty_level,
+        "spell_type": spell.spell_type,
+        "description": spell.description,
+
       })
 
-    company_dict = {
-      "company_id": product_query.companies.company_id,
-      "category_name": product_query.companies.company_name
-    }
-    product = {
-      'product_id': product_query.product_id,
-      'product_name': product_query.product_name,
-      'description': product_query.description,
-      'price': product_query.price,
-      'active': product_query.active,
-      'company': company_dict,
-      'categories': categories_list,
+    wizard = {
+      "wizard_id": wizard_query.wizard_id,
+      "school_id": wizard_query.school_id,
+      "wizard_name": wizard_query.wizard_name,
+      "house": wizard_query.house,
+      "year_enrolled": wizard_query.year_enrolled,
+      "magical_power_level": wizard_query.magical_power_level,
+      "active": wizard_query.active,
+      'spells': spells_list
     }
 
-  return jsonify({"message": "category added to product", "result": product}), 201
+  return jsonify({"message": "spell added to wizard", "result": wizard}), 201
 
 
 def get_all_wizards():
