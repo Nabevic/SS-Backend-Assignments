@@ -21,7 +21,7 @@ def construct_record(query):
 def add_book():
   post_data = request.form if request.form else request.get_json()
 
-  fields = ["school_id", "title", "author", "subject", "rarity_level", "magical_properties"]
+  fields = ["school_id", "title", "author", "subject", "rarity_level", "magical_properties", "available"]
   required_fields = ['school_id','title']
 
   values = {}

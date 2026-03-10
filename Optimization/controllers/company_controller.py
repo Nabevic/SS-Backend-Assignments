@@ -11,9 +11,13 @@ def add_company():
   new_company = Companies.new_company_obj()
   populate_object(new_company, post_data)
 
-  db.session.add(new_company)
-  db.session.commit()
-
+  try:
+    db.session.add(new_company)
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"message": f"unable to create company. {e}"}), 400
+  
   return jsonify({"message": "company created","result": company_schema.dump(new_company)}), 201
 
 

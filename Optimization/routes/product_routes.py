@@ -9,9 +9,9 @@ def add_product():
     return controllers.add_product()
 
 
-@product.route('/product/category', methods=['POST'])
-def add_product_category_association():
-    return controllers.add_product_category_association()
+@product.route('/product/category/<product_id>/<category_id>', methods=['POST'])
+def add_product_category_association(product_id, category_id):
+    return controllers.add_product_category_association(product_id, category_id)
 
 
 @product.route('/products', methods=['GET'])

@@ -13,8 +13,8 @@ class MagicalSchools(db.Model):
   founded_year = db.Column(db.Integer())
   headmaster = db.Column(db.String())
 
-  books = db.relationship("Books", foeign_keys='[Books.school_id]', back_populates="magical_schools", cascade='all')
-  wizards = db.relationship("Wizards", foreign_keys='[Wizards.school_id]', back_populates='magical_schools', cascade='all')
+  books = db.relationship("Books", foreign_keys='[Books.school_id]', back_populates="magical_schools", uselist=False, cascade='all')
+  wizards = db.relationship("Wizards", foreign_keys='[Wizards.school_id]', back_populates='schools', cascade='all')
 
   def __init__(self, school_name, location, founded_year, headmaster):
     self.school_name = school_name

@@ -173,6 +173,7 @@ def product_by_id(product_id):
     try:
       db.session.commit()
     except Exception as e:
+       db.session.rollback()
        return jsonify({"message:": f"unable to update record: {e}"}), 400
     
     updated_product_query = db.session.query(Products).filter(Products.product_id == product_id).first()

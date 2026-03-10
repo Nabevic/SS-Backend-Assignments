@@ -19,8 +19,7 @@ class Wizards(db.Model):
   schools = db.relationship("MagicalSchools", foreign_keys='[Wizards.school_id]', back_populates='wizards')
   spells = db.relationship("Spells", secondary=wizard_specializations_table, back_populates = 'wizards')
 
-  def __init__(self, wizard_id, school_id, wizard_name, house, year_enrolled, magical_power_level, active):
-    self.wizard_id = wizard_id
+  def __init__(self, school_id, wizard_name, house, year_enrolled, magical_power_level, active):
     self.school_id = school_id
     self.wizard_name = wizard_name
     self.house = house

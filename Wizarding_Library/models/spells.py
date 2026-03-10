@@ -5,7 +5,7 @@ from db import db
 from models.wizard_specializations import wizard_specializations_table
 
 class Spells(db.Model):
-  __tabename__ = "Spells"
+  __tablename__ = "Spells"
 
   spell_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
   spell_name = db.Column(db.String(), nullable=False, unique=True)

@@ -34,9 +34,16 @@ class Products(db.Model):
 class ProductsSchema(ma.Schema):
     class Meta:
         fields = ['product_id', 'product_name', 'description', 'price', 'company', 'categories', 'warranty', 'active']
-        company = ma.fields.Nested("CompaniesSchema", exclude=['products'])
-        categories = ma.fields.Nested("CategoriesSchema", many=True, exclude=['products'])
-        warranty = ma.fields.Nested("WarrantiesSchema", exclude=['product'])
+
+    product_id = ma.fields.UUID(required=True)
+    product_name = ma.fields.String(required=True)
+    description = ma.fields.String(allow_none=True)
+    price = ma.fields.Float(allow_none=True)
+    active = ma.fields.Boolean(dump_default=True)
+
+    company = ma.fields.Nested("CompaniesSchema", exclude=['products'])
+    categories = ma.fields.Nested("CategoriesSchema", many=True, exclude=['products'])
+    warranty = ma.fields.Nested("WarrantiesSchema", exclude=['products'])
         
         
 product_schema = ProductsSchema()

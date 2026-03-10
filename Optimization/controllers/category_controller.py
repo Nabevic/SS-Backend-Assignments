@@ -11,7 +11,12 @@ def add_category():
   new_category = Categories.new_category_obj()
   populate_object(new_category, post_data)
 
-  db.session.add(new_category)
+  try:
+    db.session.add(new_category)
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"message": f"unable to create category. {e}"}), 400
 
   return jsonify({"message": "category created","result": category_schema.dump(new_category)}), 201
 

@@ -15,7 +15,7 @@ def get_spells():
 
 @spell.route('/spells/<difficulty_level>', methods=['GET'])
 def get_spells_by_difficulty(difficulty_level):
-  return controllers.get_spell_by_difficulty(difficulty_level)
+  return controllers.get_spells_by_difficulty(difficulty_level)
 
 @spell.route('/spell/<spell_id>', methods=['PUT'])
 def update_spell(spell_id):

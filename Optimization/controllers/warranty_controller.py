@@ -11,7 +11,12 @@ def add_warranty():
   new_warranty = Warranties.new_warranty_obj()
   populate_object(new_warranty, post_data)
 
-  db.session.add(new_warranty)
+  try:
+    db.session.add(new_warranty)
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"message": f"unable to create warranty. {e}"}), 400
 
   return jsonify({"message": "warranty created","result": warranty_schema.dump(new_warranty)}), 201
 

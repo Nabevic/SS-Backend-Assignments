@@ -19,7 +19,7 @@ database_password = os.environ.get('DATABASE_PASSWORD')
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'{database_scheme}{database_user}:{database_password}@{database_address}:{database_port}/{database_name}'
-app.config['SQLALCHEMY_TACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 init_db(app,db)
 

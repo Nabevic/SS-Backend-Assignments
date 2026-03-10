@@ -28,7 +28,7 @@ def add_school():
       return jsonify({"message": f'{field} is required'}), 400
     values[field] = field_data
   
-  new_school = MagicalSchools(**values)
+  new_school = MagicalSchools(values["school_name"], values["location"], values["founded_year"], values["headmaster"])
 
   try:
     db.session.add(new_school)

@@ -23,6 +23,9 @@ class CompaniesSchema(ma.Schema):
   class Meta:
     fields = ['company_id', 'company_name']
 
+  company_id = ma.fields.UUID(required=True)
+  company_name = ma.fields.String(required=True)
+
 
 company_schema = CompaniesSchema()
 companies_schema = CompaniesSchema(many=True)  

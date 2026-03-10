@@ -7,33 +7,24 @@ from util.reflection import populate_object
 
 
 def add_product():
-    post_data = request.form if request.form else request.get_json()
-
-    new_product = Products.new_product_obj()
-    populate_object(new_product, post_data)
-
-    db.session.add(new_product)
-    db.session.commit()
-
-    return jsonify({"message": "product created","result": product_schema.dump(new_product)}), 201
-
-
-def add_product_category_association():
   post_data = request.form if request.form else request.get_json()
 
-  fields = ['product_id','category_id']
-  required_fields = ['product_id','category_id']
+  new_product = Products.new_product_obj()
+  populate_object(new_product, post_data)
 
-  values = {}
-
-  for field in fields:
-    field_data = post_data.get(field)
-    if field_data in required_fields and not field_data:
-      return jsonify({"message":f"{field} is required"}), 400
-    values[field] = field_data
+  try:
+    db.session.add(new_product)
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"message": f"unable to create product. {e}"}), 400
   
-  product_query = db.session.query(Products).filter(Products.product_id == values['product_id']).first()
-  category_query = db.session.query(Categories).filter(Categories.category_id == values['category_id']).first()
+  return jsonify({"message": "product created","result": product_schema.dump(new_product)}), 201
+
+
+def add_product_category_association(product_id, category_id):
+  product_query = db.session.query(Products).filter(Products.product_id == product_id).first()
+  category_query = db.session.query(Categories).filter(Categories.category_id == category_id).first()
 
   if not product_query:
     return jsonify({"message":"product id does not exist"}), 404
@@ -42,21 +33,17 @@ def add_product_category_association():
     return jsonify({"message":"category id does not exist"}), 404
 
   if product_query and category_query:
+    product_query.categories.append(category_query)
+    db.session.commit()
 
-    try:
-      product_query.categories.append(category_query)
-      db.session.commit()
-
-    except Exception as e:
-      db.session.rollback()
-      return jsonify({"message": f"could not add association. {e}"}), 400
-
-    association_query = db.session.query(Products).filter(Products.product_id == values['product_id']).first()
-  return jsonify({"message": "category added to product", "result": association_query}), 201
+  return jsonify({"message": "category added to product", "result": product_schema.dump(product_query)}), 201
 
 
 def get_all_products():
     products_query = db.session.query(Products).all()
+
+    if not products_query:
+       return jsonify({"message": "no products found"}), 404
 
     return jsonify({"message": "products retrieved", "results": products_schema.dump(products_query)}), 200
 

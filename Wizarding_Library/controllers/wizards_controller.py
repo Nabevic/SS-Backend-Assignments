@@ -20,7 +20,7 @@ def construct_record(query):
 def add_wizard():
   post_data = request.form if request.form else request.get_json()
 
-  fields = ["school_id", "wizard_name", "house", "year_enrolled", "magical_power_level"]
+  fields = ["school_id", "wizard_name", "house", "year_enrolled", "magical_power_level", "active"]
   required_fields = ['school_id','wizard_name']
 
   values = {}
@@ -104,29 +104,36 @@ def get_wizards_by_power(magical_power_level):
 
 
 def wizard_id(wizard_id):
-  data = request.form if request.form else request.get_json()
   wizard_query = db.session.query(Wizards).filter(Wizards.wizard_id == wizard_id).first()
 
   if not wizard_query:
     return jsonify({"message": f"wizard not found with id {wizard_id}"}), 404 
-
-  wizard_query.school_id = data.get("school_id", wizard_query.school_id)
-  wizard_query.wizard_name = data.get("wizard_name", wizard_query.wizard_name)
-  wizard_query.house = data.get("house", wizard_query.house)
-  wizard_query.year_enrolled = data.get("year_enrolled", wizard_query.year_enrolled)
-  wizard_query.magical_power_level = data.get("magical_power_level", wizard_query.magical_power_level)
-  wizard_query.active = data.get("active", wizard_query.active)
-
-  try:
-    db.session.commit()
-  except Exception as e:
-    db.session.rollback()
-    return jsonify({"message:": f"unable to update record: {e}"}), 400
   
-  updated_wizard = db.session.query(Wizards).filter(Wizards.wizard_id == wizard_id).first()
-  wizard_record = construct_record(updated_wizard)
+  if request.method == 'PUT':
+    data = request.form if request.form else request.get_json()
 
-  return jsonify({"message": "wizard updated", "results": wizard_record}), 200
+    wizard_query.school_id = data.get("school_id", wizard_query.school_id)
+    wizard_query.wizard_name = data.get("wizard_name", wizard_query.wizard_name)
+    wizard_query.house = data.get("house", wizard_query.house)
+    wizard_query.year_enrolled = data.get("year_enrolled", wizard_query.year_enrolled)
+    wizard_query.magical_power_level = data.get("magical_power_level", wizard_query.magical_power_level)
+    wizard_query.active = data.get("active", wizard_query.active)
+
+    try:
+      db.session.commit()
+    except Exception as e:
+      db.session.rollback()
+      return jsonify({"message:": f"unable to update record: {e}"}), 400
+    
+    updated_wizard = db.session.query(Wizards).filter(Wizards.wizard_id == wizard_id).first()
+    wizard_record = construct_record(updated_wizard)
+
+    return jsonify({"message": "wizard updated", "results": wizard_record}), 200
+  
+  elif request.method == 'GET':
+    wizard_record = construct_record(wizard_query)
+
+    return jsonify({"message": "school found", "result": wizard_record}), 200
 
 
 def delete_wizard(wizard_id):
