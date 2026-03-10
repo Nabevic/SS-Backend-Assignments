@@ -47,8 +47,63 @@ def add_wizard():
 
 
 def add_wizard_specialization():
-  #post
-  pass
+  post_data = request.form if request.form else request.get_json()
+
+  fields = ['wizard_id','spell_id', "proficiency_level", "date_learned"]
+  required_fields = ['wizard_id','spell_id']
+
+  values = {}
+
+  for field in fields:
+    field_data = post_data.get(field)
+    if field_data in required_fields and not field_data:
+      return jsonify({"message":f"{field} is required"}), 400
+    values[field] = field_data
+  
+  product_query = db.session.query(Products).filter(Products.product_id == values['product_id']).first()
+  category_query = db.session.query(Categories).filter(Categories.category_id == values['category_id']).first()
+
+  if not product_query:
+    return jsonify({"message":"product id does not exist"}), 404
+  
+  elif not category_query:
+    return jsonify({"message":"category id does not exist"}), 404
+
+  if product_query and category_query:
+
+    try:
+      product_query.categories.append(category_query)
+      db.session.commit()
+
+    except Exception as e:
+      db.session.rollback()
+      return jsonify({"message": f"could not add association. {e}"}), 400
+
+    categories_list = []
+    
+    for category in product_query.categories:
+      categories_list.append({
+        "category_id": category.category_id,
+        "category_name": category.category_name
+      })
+
+    company_dict = {
+      "company_id": product_query.companies.company_id,
+      "category_name": product_query.companies.company_name
+    }
+    product = {
+      'product_id': product_query.product_id,
+      'product_name': product_query.product_name,
+      'description': product_query.description,
+      'price': product_query.price,
+      'active': product_query.active,
+      'company': company_dict,
+      'categories': categories_list,
+    }
+
+  return jsonify({"message": "category added to product", "result": product}), 201
+
+
 def get_all_wizards():
   wizards_query = db.session.query(Wizards).all()
   if not wizards_query:
