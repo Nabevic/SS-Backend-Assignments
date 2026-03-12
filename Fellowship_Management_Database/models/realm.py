@@ -29,4 +29,7 @@ class RealmsSchema(ma.Schema):
   realm_name = ma.fields.String(required=True)
   ruler = ma.fields.String(allow_none=True)
 
+realm_schema = RealmsSchema()
+realms_schema = RealmsSchema(many=True)
+
 

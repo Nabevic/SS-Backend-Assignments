@@ -23,7 +23,7 @@ class Abilities(db.Model):
     self.ability_name = ability_name
     self.power_level = power_level
 
-  def new_product_obj():
+  def new_ability_obj():
     return Abilities('', '', 0)
   
 class AbilitiesSchema(ma.Schema):

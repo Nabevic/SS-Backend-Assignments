@@ -7,7 +7,7 @@ from util.reflection import populate_object
 def add_ability():
   post_data = request.form if request.form else request.get_json()
 
-  new_ability = Abilities.new_product_obj()
+  new_ability = Abilities.new_ability_obj()
   populate_object(new_ability, post_data)
 
   try:

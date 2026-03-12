@@ -19,7 +19,7 @@ class Races(db.Model):
     self.homeland = homeland
     self.lifespan = lifespan
 
-  def new_hero_obj():
+  def new_race_obj():
     return Races('', '', 0) 
 
 class RacesSchema(ma.Schema):
