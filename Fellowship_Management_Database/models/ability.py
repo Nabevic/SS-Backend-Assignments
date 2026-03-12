@@ -14,7 +14,6 @@ class Abilities(db.Model):
   ability_name = db.Column(db.String(), unique=True, nullable=False)
   power_level = db.Column(db.Integer())
 
-  #include relationships if any
   heroes = db.relationship("Heroes", foreign_keys='[Heroes.hero_id]', back_populates='abilities')
  
 
@@ -38,7 +37,7 @@ class AbilitiesSchema(ma.Schema):
 
 
 ability_schema = AbilitiesSchema()
-ability_schema = AbilitiesSchema(many=True)
+abilities_schema = AbilitiesSchema(many=True)
 
 
 

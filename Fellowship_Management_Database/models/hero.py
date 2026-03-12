@@ -18,7 +18,7 @@ class Heroes(db.Model):
 
   races = db.relationship("Races", foreign_keys='[Races.race_id]', back_populates='heroes')
   abilities = db.relationship("Abilities", foreign_keys='[Abilities.hero_id]', back_populates='heroes', uselist=False, cascade='all')
-  quests = db.relationship("Quests", secondary=hero_quest_association_table, back_populates='abilities')
+  quests = db.relationship("Quests", secondary=hero_quest_association_table, back_populates='heroes')
 
   def __init__(self, race_id, hero_name, age, health_points, is_alive):
     self.race_id = race_id
