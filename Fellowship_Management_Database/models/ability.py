@@ -14,7 +14,7 @@ class Abilities(db.Model):
   ability_name = db.Column(db.String(), unique=True, nullable=False)
   power_level = db.Column(db.Integer())
 
-  heroes = db.relationship("Heroes", foreign_keys='[Heroes.hero_id]', back_populates='abilities')
+  hero = db.relationship("Heroes", foreign_keys='[Abilities.hero_id]', back_populates='abilities', uselist=False)
  
 
 
@@ -30,7 +30,7 @@ class AbilitiesSchema(ma.Schema):
   class Meta:
     fields = ['ability_id', 'hero_id', 'ability_name', 'power_level']
 
-  ability_id = ma.fields.UUID(required=True)
+  ability_id = ma.fields.UUID()
   hero_id = ma.fields.UUID(required=True)
   ability_name = ma.fields.String(required=True)
   power_level = ma.fields.Integer(required=True)

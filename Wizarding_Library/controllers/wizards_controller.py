@@ -5,6 +5,18 @@ from models.wizards import Wizards
 from models.spells import Spells
 
 def construct_record(query):
+  spells_list = []
+    
+  for spell in query.spells:
+    spells_list.append({
+      "spell_id": spell.spell_id,
+      "spell_name": spell.spell_name,
+      "incantation": spell.incantation,
+      "difficulty_level": spell.difficulty_level,
+      "spell_type": spell.spell_type,
+      "description": spell.description,
+
+    })
   wizard_record = {
     "wizard_id": query.wizard_id,
     "school_id": query.school_id,
@@ -12,7 +24,8 @@ def construct_record(query):
     "house": query.house,
     "year_enrolled": query.year_enrolled,
     "magical_power_level": query.magical_power_level,
-    "active": query.active
+    "active": query.active,
+    "specializations": spells_list
   }
   return wizard_record
 

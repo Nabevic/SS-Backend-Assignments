@@ -13,8 +13,8 @@ class Locations(db.Model):
   danger_level = db.Column(db.Integer())
   
 
-  realms = db.relationship("Realms", foreign_keys='[Locations.realm_id]', back_populates='locations')
-  quests = db.relationship("Quests", foreign_keys='[Quests.location_id]', back_populates='locations', cascade='all')
+  realm = db.relationship("Realms", foreign_keys='[Locations.realm_id]', back_populates='location')
+  quest = db.relationship("Quests", foreign_keys='[Quests.location_id]', back_populates='location', cascade='all')
 
   def __init__(self, realm_id, location_name, danger_level):
     self.realm_id = realm_id
@@ -29,7 +29,7 @@ class LocationsSchema(ma.Schema):
   class meta:
     fields = ['location_id', 'realm_id', 'location_name', 'danger_level']
 
-  location_id = ma.fields.UUID(required=True)
+  location_id = ma.fields.UUID()
   realm_id = ma.fields.UUID(required=True)
   location_name = ma.fields.String(required=True)
   danger_level = ma.fields.Integer(allow_none=True)

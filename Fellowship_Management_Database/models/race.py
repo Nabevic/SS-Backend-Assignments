@@ -12,7 +12,7 @@ class Races(db.Model):
   homeland = db.Column(db.String())
   lifespan = db.Column(db.Integer())
 
-  heroes = db.relationship("Heroes", foreign_keys='[Races.race_id]', back_populates='Races', cascade='all')
+  hero = db.relationship("Heroes", foreign_keys='[Heroes.race_id]', back_populates='race', cascade='all')
 
   def __init__(self, race_name, homeland, lifespan):
     self.race_name = race_name
@@ -26,8 +26,8 @@ class RacesSchema(ma.Schema):
   class Meta:
     fields = ['race_id','race_name', 'homeland', 'lifespan']
 
-  race_id = ma.fields.UUID(requird=True)
-  race_name = ma.fields.String(requird=True)
+  race_id = ma.fields.UUID()
+  race_name = ma.fields.String(required=True)
   homeland = ma.fields.String(allow_none=True)
   lifespan =  ma.fields.Integer(allow_none=True)
 

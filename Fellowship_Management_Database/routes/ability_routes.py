@@ -13,6 +13,6 @@ def add_ability():
 def update_ability(ability_id):
   return controllers.update_ability(ability_id)
 
-@ability.route("/ability/<ability_id", methods=['DELETE'])
+@ability.route("/ability/<ability_id>", methods=['DELETE'])
 def delete_ability(ability_id):
   return controllers.delete_ability(ability_id)

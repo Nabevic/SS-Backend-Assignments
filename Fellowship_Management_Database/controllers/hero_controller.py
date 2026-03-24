@@ -59,9 +59,13 @@ def get_heroes_alive():
   return jsonify({"message": "heroes found", "results": heroes_schema.dump(heroes_query)}), 200
 
 
-def get_hero_quests(hero_id):
-  pass
-  #This needs to be filled out
+def get_hero_quests(hero_id): #double check logic
+  quest_query = db.session.query(Quests).filter(Heroes.hero_id == hero_id).all()
+  if not quest_query:
+    return jsonify({"message": "no quests found"}), 404
+  
+  return jsonify({"message": "quests found", "results": quest_schema.dump(quest_query)}), 200
+
 
 def hero_by_id(hero_id):
   hero_query = db.session.query(Heroes).filter(Heroes.hero_id == hero_id).first()

@@ -24,7 +24,7 @@ class CategoriesSchema(ma.Schema):
   class Meta:
     fields = ['category_id', 'category_name']
 
-  category_id = ma.fields.UUID(required=True)
+  category_id = ma.fields.UUID()
   category_name = ma.fields.String(required=True)
 
 category_schema = CategoriesSchema()

@@ -25,7 +25,7 @@ class WarrantiesSchema(ma.Schema):
   class Meta:
     fields = ['warranty_id', 'warranty_name', 'product_id', 'warranty_months']
 
-  warranty_id = ma.fields.UUID(required=True)
+  warranty_id = ma.fields.UUID()
   warranty_name = ma.fields.String(required=True)
   product_id = ma.fields.UUID(required=True)
   warranty_months = ma.fields.Integer(required=True)  

@@ -16,9 +16,9 @@ class Heroes(db.Model):
   health_points = db.Column(db.Integer())
   is_alive = db.Column(db.Boolean(), default=True)
 
-  races = db.relationship("Races", foreign_keys='[Races.race_id]', back_populates='heroes')
-  abilities = db.relationship("Abilities", foreign_keys='[Abilities.hero_id]', back_populates='heroes', uselist=False, cascade='all')
-  quests = db.relationship("Quests", secondary=hero_quest_association_table, back_populates='heroes')
+  race = db.relationship("Races", foreign_keys='[Heroes.race_id]', back_populates='hero')
+  abilities = db.relationship("Abilities", foreign_keys='[Abilities.hero_id]', back_populates='hero', uselist=False, cascade='all')
+  quests = db.relationship("Quests", secondary=hero_quest_association_table, back_populates='hero')
 
   def __init__(self, race_id, hero_name, age, health_points, is_alive):
     self.race_id = race_id
@@ -35,15 +35,15 @@ class HeroesSchema(ma.Schema):
   class Meta:
     fields = ['hero_id', 'hero_name', 'age', 'health_points', 'is_alive', 'race', 'abilities', 'quests' ]
 
-  hero_id = ma.fields.UUID(required=True)
+  hero_id = ma.fields.UUID()
   hero_name = ma.fields.String(required=True)
   age = ma.fields.Integer(allow_none=True)
   health_points = ma.fields.Integer(required=True)
   is_alive = ma.fields.Boolean(dump_default=True)
   
-  race = ma.fields.Nested("RacesSchema", exclude=['heroes'])
-  abilities = ma.fields.Nested("AbilitiesSchema", many=True, exclude=['heroes'])
-  quests = ma.fields.Nested("QuestsSchema", many=True, exclude=['heroes'])
+  race = ma.fields.Nested("RacesSchema", exclude=['hero'])
+  abilities = ma.fields.Nested("AbilitiesSchema", many=True, exclude=['hero'])
+  quests = ma.fields.Nested("QuestsSchema", many=True, exclude=['hero'])
 
 hero_schema = HeroesSchema()
 heroes_schema = HeroesSchema(many=True)

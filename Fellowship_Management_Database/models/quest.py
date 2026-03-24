@@ -16,8 +16,8 @@ class Quests(db.Model):
   reward_gold = db.Column(db.Integer())
   is_completed = db.Column(db.Boolean(), default=False)
 
-  heroes = db.relationship("Heroes", secondary=hero_quest_association_table, back_populates="quests")
-  locations = db.relationship("Locations", foreign_keys='[Quests.location_id]', back_populates='quests')
+  hero = db.relationship("Heroes", secondary=hero_quest_association_table, back_populates="quests")
+  location = db.relationship("Locations", foreign_keys='[Quests.location_id]', back_populates='quest')
 
   def __init__(self, location_id, quest_name, difficulty, reward_gold, is_completed):
     self.location_id = location_id
@@ -39,7 +39,7 @@ class QuestsSchema(ma.Schema):
   quest_name = ma.fields.String(required=True)
   difficulty = ma.fields.String(allow_none=True)
   reward_gold = ma.fields.Integer(allow_none=True)
-  is_completed = ma.fields(dump_default=True)
+  is_completed = ma.fields.Boolean(dump_default=True)
 
 quest_schema = QuestsSchema()
 quests_schema = QuestsSchema(many=True)

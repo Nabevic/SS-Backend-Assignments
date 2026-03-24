@@ -17,6 +17,6 @@ def get_races():
 def race_by_id(race_id):
   return controllers.race_by_id(race_id)
 
-@race.route("/race/delete/<race_id>", methods=['POST'])
+@race.route("/race/delete/<race_id>", methods=['DELETE'])
 def delete_race(race_id):
   return controllers.delete_race(race_id)

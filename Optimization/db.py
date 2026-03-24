@@ -10,5 +10,5 @@ def init_db(app=None, db=None):
     db.init_app(app)
 
   else:
-    raise ValueError('connot init db without db and app objects')
+    raise ValueError('cannot init db without db and app objects')
   
