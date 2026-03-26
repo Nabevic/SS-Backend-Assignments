@@ -16,9 +16,9 @@ class Products(db.Model):
     description = db.Column(db.String())
     active = db.Column(db.Boolean(), default=True)
 
-    companies = db.relationship("Companies", foreign_keys='[Products.company_id]', back_populates='products')
+    company = db.relationship("Companies", foreign_keys='[Products.company_id]', back_populates='products')
     categories = db.relationship("Categories", secondary=products_categories_association_table, back_populates='products')
-    warranties = db.relationship("Warranties", foreign_keys='[Warranties.product_id]', back_populates='products', uselist=False, cascade='all')
+    warranty = db.relationship("Warranties", foreign_keys='[Warranties.product_id]', back_populates='products', uselist=False, cascade='all')
 
     def __init__(self, company_id, product_name, price, description, active=True):
         self.company_id = company_id
@@ -41,9 +41,9 @@ class ProductsSchema(ma.Schema):
     price = ma.fields.Float(allow_none=True)
     active = ma.fields.Boolean(dump_default=True)
 
-    company = ma.fields.Nested("CompaniesSchema", exclude=['products'])
-    categories = ma.fields.Nested("CategoriesSchema", many=True, exclude=['products'])
-    warranty = ma.fields.Nested("WarrantiesSchema", exclude=['products'])
+    company = ma.fields.Nested("CompaniesSchema")
+    categories = ma.fields.Nested("CategoriesSchema", many=True)
+    warranty = ma.fields.Nested("WarrantiesSchema")
         
         
 product_schema = ProductsSchema()

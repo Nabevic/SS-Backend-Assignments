@@ -51,7 +51,7 @@ def get_heroes():
 
 
 def get_heroes_alive():
-  heroes_query = db.session.query(Heroes.is_alive == True).all()
+  heroes_query = db.session.query(Heroes).filter(Heroes.is_alive == True).all()
 
   if not heroes_query:
     return jsonify({"message": "no heroes found"}), 404
@@ -60,11 +60,11 @@ def get_heroes_alive():
 
 
 def get_hero_quests(hero_id): #double check logic
-  quest_query = db.session.query(Quests).filter(Heroes.hero_id == hero_id).all()
+  quest_query = db.session.query(Quests).join('HeroesQuestsAssociation').join(Heroes).filter(Heroes.hero_id == hero_id).all()
   if not quest_query:
     return jsonify({"message": "no quests found"}), 404
   
-  return jsonify({"message": "quests found", "results": quest_schema.dump(quest_query)}), 200
+  return jsonify({"message": "quests found", "results": quests_schema.dump(quest_query)}), 200
 
 
 def hero_by_id(hero_id):

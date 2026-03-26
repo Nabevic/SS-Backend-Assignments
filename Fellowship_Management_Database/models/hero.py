@@ -41,9 +41,9 @@ class HeroesSchema(ma.Schema):
   health_points = ma.fields.Integer(required=True)
   is_alive = ma.fields.Boolean(dump_default=True)
   
-  race = ma.fields.Nested("RacesSchema", exclude=['hero'])
-  abilities = ma.fields.Nested("AbilitiesSchema", many=True, exclude=['hero'])
-  quests = ma.fields.Nested("QuestsSchema", many=True, exclude=['hero'])
+  race = ma.fields.Nested("RacesSchema")
+  abilities = ma.fields.Nested("AbilitiesSchema", many=True)
+  quests = ma.fields.Nested("QuestsSchema", many=True)
 
 hero_schema = HeroesSchema()
 heroes_schema = HeroesSchema(many=True)
