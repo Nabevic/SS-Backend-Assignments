@@ -39,7 +39,7 @@ def update_product_by_id(product_id):
     return controllers.update_product_by_id(product_id)
 
 
-@product.route('/product/delete/<product_id>', methods=['DELETE'])
-def delete_product(product_id):
-    return controllers.delete_product(product_id)
+@product.route('/product/delete', methods=['DELETE'])
+def delete_product():
+    return controllers.delete_product()
 
