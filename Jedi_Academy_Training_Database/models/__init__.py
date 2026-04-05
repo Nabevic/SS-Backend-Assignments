@@ -1,6 +1,6 @@
 from .courses import *
 from .crystals import *
-from .force_tokens import *
+from .auth_tokens import *
 from .lightsabers import *
 from .masters import *
 from .padawan_courses_xref import *

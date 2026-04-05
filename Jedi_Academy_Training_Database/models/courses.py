@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import marshmallow as ma
 
 from db import db
-from .padawan_courses_xref import enrollment_table
+from .padawan_courses_xref import padawan_course_enrollment_table
 
 class Courses(db.Model):
   __tablename__ = "Courses"
@@ -16,7 +16,7 @@ class Courses(db.Model):
   max_students = db.Column(db.Integer())
 
   master = db.relationship("Masters", foreign_keys='[Masters.master_id]', back_populates='courses')
-  padawans = db.relationship("Padawans", secondary=enrollment_table, back_populates='courses')
+  padawans = db.relationship("Padawans", secondary=padawan_course_enrollment_table, back_populates='courses')
 
   def __init__(self, instructor_id, course_name, difficulty, duration_weeks, max_students):
     self.instructor_id = instructor_id

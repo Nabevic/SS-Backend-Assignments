@@ -16,6 +16,7 @@ class Masters(ma.Schema):
   max_padawans = db.Column(db.Integer())
 
   user = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='master')
+  padawans = db.relationship("Padawans", foreign_keys='[Padawans.padawan_id]', back_populates='master')
 
   def __init__(self, user_id, master_name, specialization, years_training, max_padawans):
     
