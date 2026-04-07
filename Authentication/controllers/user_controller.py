@@ -49,7 +49,7 @@ def user_by_id(user_id, auth_info):
       except Exception as e:
         db.session.rollback()
         return jsonify({"message": f"unable to update user. {e}"}), 400
-      return jsonify({"message": "hero updated", "results": user_schema.dump(user_query)}), 200
+      return jsonify({"message": "user updated", "results": user_schema.dump(user_query)}), 200
     
     elif request.method == 'GET':
       return jsonify({"message": "user found", "result":user_schema.dump(user_query)}), 200

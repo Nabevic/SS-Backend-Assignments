@@ -1,0 +1,55 @@
+import marshmallow as ma
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
+from db import db
+
+
+class Users(db.Model):
+  __tablename__ = 'Users'
+
+  user_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+  address = db.Column(UUID(as_uuid=True), db.ForiegnKey('Addresses.address_id'))
+  first_name = db.Column(db.String(), nullable=False)
+  last_name = db.Column(db.String(), nullable=False)
+  email = db.Column(db.String(), nullable=False, unique=True)
+  password = db.Column(db.String(), nullable=False)
+  birthdate = db.Column(db.DateTime(), nullable=False)
+  phone = db.Column(db.String())
+  role = db.Column(db.String(), nullable=False, default='user')
+  active = db.Column(db.Boolean(), nullable=False, default=True)
+
+  auth = db.relationship('AuthTokens', back_populates='user')
+  address = db.relationship('Addresses', foreign_keys='[Addresses.address_id]', cascade='all' , back_populates='user')
+
+  def __init__(self, address, first_name, last_name, email, password, birthdate, phone, active, role):
+    self.address = address
+    self.first_name = first_name
+    self.last_name = last_name
+    self.email = email
+    self.password = password
+    self.birthdate = birthdate
+    self.phone = phone
+    self.role = role
+    self.active = active
+
+  def new_user_obj():
+    return Users('','','','','','','','user',True)
+    
+
+class UsersSchema(ma.Schema):
+  class Meta:
+    fields = [ 'user_id', 'address', 'first_name', 'last_name', 'email', 'password', 'birthdate', 'phone', 'role', 'active']
+
+  user_id = ma.fields.UUID()
+  address = ma.fields.UUID()
+  first_name = ma.fields.String(required=True)
+  last_name = ma.fields.String(required=True)
+  email = ma.fields.String(required=True)
+  birthdate = ma.fields.DateTime(required=True)
+  phone = ma.fields.String(allow_none=True)
+  role = ma.fields.String(required=True, dump_default='user')
+  active = ma.fields.Boolean(required=True, dump_default=True)
+
+user_schema = UsersSchema()
+users_schema = UsersSchema(many=True)

@@ -8,10 +8,10 @@ from db import db
 class Lightsabers(db.Model):
   __tablename__ = 'Lightsabers'
   
-  saber_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+  lightsaber_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
   owner_id = db.Column(UUID(as_uuid=True), db.ForeignKey("Users.user_id"), nullable=False)
   crystal_id = db.Column(UUID(as_uuid=True), db.ForeignKey("Crystals.crystal_id"), nullable=False)
-  saber_name = db.Column(db.String(), unique=True)
+  lightsaber_name = db.Column(db.String(), unique=True)
   hilt_material = db.Column(db.String())
   blade_color = db.Column(db.String())
   is_completed = db.Column(db.Boolean())
@@ -19,23 +19,23 @@ class Lightsabers(db.Model):
   owner = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='lightsaber')
   crystal = db.relationship("Crystals", foreign_keys='[Crystals.crystal_id]', back_populates='lightsaber')
 
-  def __init__(self, owner_id, crystal_id, saber_name, hilt_material, blade_color, is_completed):
+  def __init__(self, owner_id, crystal_id, lightsaber_name, hilt_material, blade_color, is_completed):
     self.owner_id = owner_id
     self.crystal_id = crystal_id
-    self.saber_name = saber_name
+    self.lightsaber_name = lightsaber_name
     self.hilt_material = hilt_material
     self.blade_color = blade_color
     self.is_completed = is_completed
 
-  def new_saber_obj():
+  def new_lightsaber_obj():
     return Lightsabers('','','','','', False)
   
 
 class LightsabersSchema(ma.Schema):
   class Meta:
-    fields = [ 'owner', 'crystal', 'saber_name', 'hilt_material', 'blade_color', 'is_completed']
+    fields = [ 'owner', 'crystal', 'lightsaber_name', 'hilt_material', 'blade_color', 'is_completed']
 
-    saber_name = ma.fields.String(allow_none=True)
+    lightsaber_name = ma.fields.String(allow_none=True)
     hilt_material = ma.fields.String(allow_none=True)
     blade_color = ma.fields.String(allow_none=True)
     is_completed = ma.fields.Boolean(allow_none=True)

@@ -104,7 +104,7 @@ def update_product_by_id(product_id, auth_info):
 
     db.session.commit()
 
-    return jsonify({"message": "product found", "results": product_schema.dump(product_query)}), 200
+    return jsonify({"message": "product updated", "results": product_schema.dump(product_query)}), 200
   return jsonify({"message": "unauthorized"}), 401
 
 
