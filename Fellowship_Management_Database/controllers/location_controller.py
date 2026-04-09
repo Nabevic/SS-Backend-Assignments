@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from db import db
-from models.location import Locations, location_schema, locations_schema
+from models.location import Locations, location_schema, locations_schema, location_details_schema
 from util.reflection import populate_object
 
 
@@ -40,7 +40,7 @@ def location_by_id(location_id):
     return jsonify({"message": "location updated", "results": location_schema.dump(location_query)}), 200
   
   elif request.method == 'GET':
-    return jsonify({"message": "location found", "results": location_schema.dump(location_query)}), 200
+    return jsonify({"message": "location found", "results": location_details_schema.dump(location_query)}), 200
   
 
 def delete_location(location_id):

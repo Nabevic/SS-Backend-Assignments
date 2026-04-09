@@ -1,8 +1,9 @@
 from flask import jsonify, request
 
 from db import db
-from models.hero import Heroes, hero_schema, heroes_schema
+from models.hero import Heroes, hero_schema, heroes_schema, hero_details_schema
 from models.quest import Quests, quest_schema, quests_schema
+from models.hero_quest_xref import hero_quest_association_table
 from util.reflection import populate_object
 
 
@@ -22,7 +23,7 @@ def add_hero():
   return jsonify({"message": "hero created", "results": hero_schema.dump(new_hero)}), 201
 
 
-def add_hero_quest(): #double check logic
+def add_hero_quest():
   post_data = request.form if request.form else request.get_json()
   hero_query = db.session.query(Heroes).filter(Heroes.hero_id == post_data['hero_id']).first()
   quest_query = db.session.query(Quests).filter(Quests.quest_id == post_data['quest_id']).first()
@@ -59,8 +60,8 @@ def get_heroes_alive():
   return jsonify({"message": "heroes found", "results": heroes_schema.dump(heroes_query)}), 200
 
 
-def get_hero_quests(hero_id): #double check logic
-  quest_query = db.session.query(Quests).join('HeroesQuestsAssociation').join(Heroes).filter(Heroes.hero_id == hero_id).all()
+def get_hero_quests(hero_id):
+  quest_query = db.session.query(Quests).join(hero_quest_association_table).join(Heroes).filter(Heroes.hero_id == hero_id).all()
   if not quest_query:
     return jsonify({"message": "no quests found"}), 404
   
@@ -86,7 +87,7 @@ def hero_by_id(hero_id):
     return jsonify({"message": "hero updated", "results": hero_schema.dump(hero_query)}), 200
   
   elif request.method == 'GET':
-    return jsonify({"message": "hero found", "results": hero_schema.dump(hero_query)}), 200
+    return jsonify({"message": "hero found", "results": hero_details_schema.dump(hero_query)}), 200
   
 
 def delete_hero(hero_id):

@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from db import db
-from models.race import Races, race_schema, races_schema
+from models.race import Races, race_schema, races_schema, race_details_schema
 from util.reflection import populate_object
 
 
@@ -52,7 +52,7 @@ def race_by_id(race_id):
     return jsonify({"message": "race updated", "results": race_schema.dump(race_query)}), 200
   
   elif request.method == 'GET':
-    return jsonify({"message": "race found", "results": race_schema.dump(race_query)}), 200
+    return jsonify({"message": "race found", "results": race_details_schema.dump(race_query)}), 200
 
 
 def delete_race(race_id):

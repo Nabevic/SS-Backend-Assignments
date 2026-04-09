@@ -12,7 +12,7 @@ class Races(db.Model):
   homeland = db.Column(db.String())
   lifespan = db.Column(db.Integer())
 
-  hero = db.relationship("Heroes", foreign_keys='[Heroes.race_id]', back_populates='race', cascade='all')
+  heroes = db.relationship("Heroes", foreign_keys='[Heroes.race_id]', back_populates='race', cascade='all')
 
   def __init__(self, race_name, homeland, lifespan):
     self.race_name = race_name
@@ -33,3 +33,11 @@ class RacesSchema(ma.Schema):
 
 race_schema = RacesSchema()
 races_schema = RacesSchema(many=True)
+
+class RaceDetailsSchema(RacesSchema):
+  class Meta:
+    fields = ['race_id','race_name', 'homeland', 'lifespan', 'heroes']
+
+  heroes = ma.fields.Nested("HeroesSchema", many=True, only=['hero_id', 'hero_name'])
+
+race_details_schema = RaceDetailsSchema()

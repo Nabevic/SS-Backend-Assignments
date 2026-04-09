@@ -11,7 +11,7 @@ class Realms(db.Model):
   realm_name = db.Column(db.String(), unique=True, nullable=False)
   ruler = db.Column(db.String())
 
-  location = db.relationship("Locations", foreign_keys='[Locations.realm_id]', back_populates='realm', cascade='all')
+  locations = db.relationship("Locations", foreign_keys='[Locations.realm_id]', back_populates='realm', cascade='all')
 
   def __init__(self, realm_name, ruler):
     self.realm_name = realm_name
@@ -31,5 +31,13 @@ class RealmsSchema(ma.Schema):
 
 realm_schema = RealmsSchema()
 realms_schema = RealmsSchema(many=True)
+
+class RealmDetailsSchema(RealmsSchema):
+  class Meta:
+    fields = ['realm_id', 'realm_name', 'ruler', 'locations']
+
+  locations = ma.fields.Nested("LocationsSchema", many=True, exclude=['realm_id'])
+
+realm_details_schema = RealmDetailsSchema()
 
 

@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from db import db
-from models.quest import Quests, quest_schema, quests_schema
+from models.quest import Quests, quest_schema, quests_schema, quest_details_schema
 from util.reflection import populate_object
 
 
@@ -22,12 +22,12 @@ def add_quest():
 
 
 def get_quests_by_difficulty(difficulty_level):
-  quests_query = db.session.query(Quests.difficulty_level == difficulty_level).all()
+  quests_query = db.session.query(Quests).filter(Quests.difficulty_level == difficulty_level).all()
 
   if not quests_query:
-    return jsonify({"message": "no questes found"}), 404
+    return jsonify({"message": "no quests found"}), 404
 
-  return jsonify({"message": "questes found", "results": quests_schema.dump(quests_query)}), 200
+  return jsonify({"message": "quests found", "results": quests_schema.dump(quests_query)}), 200
 
 
 def quest_by_id(quest_id):
@@ -49,7 +49,7 @@ def quest_by_id(quest_id):
     return jsonify({"message": "quest updated", "results": quest_schema.dump(quest_query)}), 200
   
   elif request.method == 'GET':
-    return jsonify({"message": "quest found", "results": quest_schema.dump(quest_query)}), 200
+    return jsonify({"message": "quest found", "results": quest_details_schema.dump(quest_query)}), 200
 
 
 def complete_quest(quest_id):
@@ -58,8 +58,10 @@ def complete_quest(quest_id):
   if not quest_query:
     return jsonify({"message": f"no quests found with id {quest_id}"}), 404
   
-  patch_data = request.form if request.form else request.get_json()
-  populate_object(quest_query, patch_data)
+  patch_data = {"is_completed":True}
+
+
+  populate_object(quest_query, patch_data )
 
   try:
     db.session.commit()

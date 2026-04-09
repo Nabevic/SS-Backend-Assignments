@@ -1,7 +1,7 @@
 from flask import jsonify, request
 
 from db import db
-from models.realm import Realms, realm_schema, realms_schema
+from models.realm import Realms, realm_schema, realms_schema, realm_details_schema
 from util.reflection import populate_object
 
 
@@ -40,7 +40,7 @@ def realm_by_id(realm_id):
     return jsonify({"message": "realm updated", "results": realm_schema.dump(realm_query)}), 200
   
   elif request.method == 'GET':
-    return jsonify({"message": "realm found", "results": realm_schema.dump(realm_query)}), 200
+    return jsonify({"message": "realm found", "results": realm_details_schema.dump(realm_query)}), 200
 
 
 def delete_realm(realm_id):
