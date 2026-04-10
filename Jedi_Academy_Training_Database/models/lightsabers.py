@@ -16,8 +16,8 @@ class Lightsabers(db.Model):
   blade_color = db.Column(db.String())
   is_completed = db.Column(db.Boolean())
 
-  owner = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='lightsaber')
-  crystal = db.relationship("Crystals", foreign_keys='[Crystals.crystal_id]', back_populates='lightsaber')
+  owner = db.relationship("Users", foreign_keys='[Lightsabers.owner_id]', back_populates='lightsaber')
+  crystal = db.relationship("Crystals", foreign_keys='[Lightsabers.crystal_id]', back_populates='lightsaber')
 
   def __init__(self, owner_id, crystal_id, lightsaber_name, hilt_material, blade_color, is_completed):
     self.owner_id = owner_id
@@ -35,13 +35,13 @@ class LightsabersSchema(ma.Schema):
   class Meta:
     fields = [ 'owner', 'crystal', 'lightsaber_name', 'hilt_material', 'blade_color', 'is_completed']
 
-    lightsaber_name = ma.fields.String(allow_none=True)
-    hilt_material = ma.fields.String(allow_none=True)
-    blade_color = ma.fields.String(allow_none=True)
-    is_completed = ma.fields.Boolean(allow_none=True)
+  lightsaber_name = ma.fields.String(allow_none=True)
+  hilt_material = ma.fields.String(allow_none=True)
+  blade_color = ma.fields.String(allow_none=True)
+  is_completed = ma.fields.Boolean(allow_none=True)
 
-    owner = ma.fields.Nested("UsersSchema", only=['user_id', 'username', 'force_rank', 'midi_count', 'is_active'])
-    crystal = ma.fields.Nested("Crystals")
+  owner = ma.fields.Nested("UsersSchema", only=['user_id', 'username', 'force_rank', 'midi_count', 'is_active'])
+  crystal = ma.fields.Nested("Crystals")
 
 
 lightsaber_schema = LightsabersSchema()

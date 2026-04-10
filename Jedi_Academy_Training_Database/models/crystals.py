@@ -14,7 +14,7 @@ class Crystals(db.Model):
   rarity_level = db.Column(db.String())
   force_amplify = db.Column(db.Float())
 
-  lightsaber = db.relationship("Lightsabers", foreign_keys='[Lightsabers.saber_id]', back_populates='crystal', cascade='all')
+  lightsaber = db.relationship("Lightsabers", foreign_keys='[Lightsabers.crystal_id]', back_populates='crystal', cascade='all')
 
   def __init__(self, crystal_type, origin_planet, rarity_level, force_amplify):
     self.crystal_type = crystal_type
@@ -30,11 +30,11 @@ class CrystalsSchema(ma.Schema):
   class Meta:
     fields = ['crystal_id','crystal_type', 'origin_planet', 'rarity_level', 'force_amplify']
 
-    crystal_id = ma.fields.UUID()
-    crystal_type = ma.fields.String(allow_none=True)
-    origin_planet = ma.fields.String(allow_none=True)
-    rarity_level = ma.fields.String(allow_none=True)
-    force_amplify = ma.fields.Float(allow_none=True)
+  crystal_id = ma.fields.UUID()
+  crystal_type = ma.fields.String(allow_none=True)
+  origin_planet = ma.fields.String(allow_none=True)
+  rarity_level = ma.fields.String(allow_none=True)
+  force_amplify = ma.fields.Float(allow_none=True)
 
 crystal_schema = CrystalsSchema()
 crystals_schema = CrystalsSchema(many=True)

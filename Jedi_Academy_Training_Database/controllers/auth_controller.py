@@ -49,7 +49,7 @@ def delete_auth_token(auth_info):
     db.session.delete(auth_info)
     db.session.commit()
 
-    return jsonify({"message": "logout sucessful"}), 200
+    return jsonify({"message": "logout successful"}), 200
   
   except:
     db.session.rollback()

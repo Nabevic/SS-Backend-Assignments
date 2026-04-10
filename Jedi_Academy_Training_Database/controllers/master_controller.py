@@ -67,5 +67,4 @@ def delete_master(master_id, auth_info):
       db.session.rollback()
       return jsonify({"message": f"unable to delete record. {e}"}), 400
     return jsonify({"message": "master deleted", "result": master_schema.dump(master_query)}), 200
-
   return jsonify({"message": "unauthorized"}), 401

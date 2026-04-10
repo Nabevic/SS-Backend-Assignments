@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import marshmallow as ma
 
 from db import db
-from padawan_courses_xref import padawan_course_enrollment_table
+from .padawan_courses_xref import padawan_course_enrollment_table
 
 class Padawans(db.Model):
   __tablename__ = "Padawans"
@@ -17,9 +17,9 @@ class Padawans(db.Model):
   training_level = db.Column(db.Integer())
   graduation_date = db.Column(db.DateTime())
 
-  master = db.relationship("Masters", foreign_keys='[Masters.master_id]', back_populates='padawans')
-  user = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='padawan')
-  species = db.relationship("Species", foreign_keys='[Species.species_id]', back_populates='padawan')
+  master = db.relationship("Masters", foreign_keys='[Padawans.master_id]', back_populates='padawans')
+  user = db.relationship("Users", foreign_keys='[Padawans.user_id]', back_populates='padawan')
+  species = db.relationship("Species", foreign_keys='[Padawans.species_id]', back_populates='padawan')
   courses = db.relationship("Courses", secondary=padawan_course_enrollment_table, back_populates='padawans')
 
   def __init__(self, master_id, user_id, species_id, padawan_name, age, training_level, graduation_date):
@@ -38,16 +38,16 @@ class PadawansSchema(ma.Schema):
   class Meta:
     fields = ['padawan_id', 'master_id', 'user_id', 'species_id', 'padawan_name', 'age', 'training_level', 'graduation_date', 'courses']
 
-    padawan_id = ma.fields.UUID()
-    master_id = ma.fields.UUID()
-    user_id = ma.fields.UUID()
-    species_id = ma.fields.UUID()
-    padawan_name = ma.fields.String(required=True)
-    age = ma.fields.Integer()
-    training_level = ma.fields.Integer()
-    graduation_date = ma.fields.DateTime()
+  padawan_id = ma.fields.UUID()
+  master_id = ma.fields.UUID()
+  user_id = ma.fields.UUID()
+  species_id = ma.fields.UUID()
+  padawan_name = ma.fields.String(required=True)
+  age = ma.fields.Integer()
+  training_level = ma.fields.Integer()
+  graduation_date = ma.fields.DateTime()
 
-    courses = ma.fields.Nested("CoursesSchema", many=True)
+  courses = ma.fields.Nested("CoursesSchema", many=True)
 
 padawan_schema = PadawansSchema()
 padawans_schema = PadawansSchema(many=True)

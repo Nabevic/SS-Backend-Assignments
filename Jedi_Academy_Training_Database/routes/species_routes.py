@@ -4,10 +4,10 @@ import controllers
 
 species = Blueprint('species', __name__)
 
-species.route('/species', methods=['POST'])
+@species.route('/species', methods=['POST'])
 def add_species_route():
-  controllers.add_species()
+  return controllers.add_species()
 
-species.route('/species/<species_id>', methods=['GET'])
+@species.route('/species/<species_id>', methods=['GET'])
 def get_species_route(species_id):
-  controllers.get_species(species_id)
+  return controllers.get_species(species_id)

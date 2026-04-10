@@ -7,9 +7,9 @@ from util.reflection import populate_object
 
 
 
-@authenticate_return_auth
-def add_temple(auth_info):
-  if auth_info.user.role =='admin':
+# @authenticate_return_auth
+def add_temple():
+  # if auth_info.user.role =='admin':
     post_data = request.form if request.form else request.get_json()
 
     new_temple = Temples.new_temple_obj()
@@ -22,12 +22,17 @@ def add_temple(auth_info):
       return jsonify({"message": f"unable to add temple. {e}"}), 400
     
     return jsonify({"message": "temple added", "result": temple_schema.dump(new_temple)}), 201
-  return jsonify({"message": "unauthorized"}), 401
+  # return jsonify({"message": "unauthorized"}), 401
 
 
 
 def get_temple(temple_id):
+  temple_query = db.session.query(Temples).filter(Temples.temple_id == temple_id).first()
 
+  if not temple_query:
+    return jsonify({"message": "no temple found"}), 404
+
+  return jsonify({"message": "temple retrieved", "results": temple_schema.dump(temple_query)}), 200
 
 @authenticate_return_auth #Grand Master rank
 def update_temple(temple_id, auth_info): 
@@ -60,3 +65,4 @@ def delete_temple(temple_id, auth_info):
       return jsonify({"message": f"unable to delete record. {e}"}), 400
     return jsonify({"message": "temple deleted", "result": temple_schema.dump(temple_query)}), 200
   return jsonify({"message": "unauthorized"}), 401
+

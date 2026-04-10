@@ -7,6 +7,10 @@ from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate
 
 
+#Force Ranks
+force_ranks = ['youngling', 'padawan', 'knight', 'master', 'council_member', 'grand_master']
+
+
 
 def add_user():
   post_data = request.form if request.form else request.json

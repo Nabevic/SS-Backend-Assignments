@@ -5,7 +5,7 @@ import marshmallow as ma
 from db import db
 
 
-class Masters(ma.Schema):
+class Masters(db.Model):
   __tablename__ = 'Masters'
 
   master_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -15,8 +15,9 @@ class Masters(ma.Schema):
   years_training = db.Column(db.Integer())
   max_padawans = db.Column(db.Integer())
 
-  user = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='master')
-  padawans = db.relationship("Padawans", foreign_keys='[Padawans.padawan_id]', back_populates='master')
+  user = db.relationship("Users", foreign_keys='[Masters.user_id]', back_populates='master')
+  padawans = db.relationship("Padawans", foreign_keys='[Padawans.master_id]', back_populates='master')
+  courses = db.relationship("Courses", foreign_keys='[Courses.instructor_id]', back_populates='master')
 
   def __init__(self, user_id, master_name, specialization, years_training, max_padawans):
     

@@ -19,7 +19,7 @@ def validate_token():
   if not auth_token or not validate_uuid4(auth_token):
     return False
 
-  existing_token = db.session.query(AuthTokens).filter(AuthTokens.auth_token == auth_token). first()
+  existing_token = db.session.query(AuthTokens).filter(AuthTokens.auth_token == auth_token).first()
 
   if existing_token:
     if existing_token.expiration > datetime.now():

@@ -14,6 +14,8 @@ class Temples(db.Model):
   padawan_limit = db.Column(db.Integer())
   is_active = db.Column(db.Boolean(), default=True)
 
+  user = db.relationship('Users', foreign_keys='[Users.temple_id]', back_populates='temple')
+
   def __init__(self, temple_name, planet, master_count, padawan_limit, is_active):
     self.temple_name = temple_name
     self.planet = planet
@@ -26,12 +28,14 @@ class Temples(db.Model):
   
 class TemplesSchema(ma.Schema):
   class Meta:
-    temple_id = ma.fields.UUID()
-    temple_name = ma.fields.String(required=True)
-    planet = ma.fields.String()
-    master_count = ma.fields.Integer()
-    padawan_limit = ma.fields.Integer()
-    is_active = ma.fields.Boolean(dump_default=True)
+    fields = ['temple_id', 'temple_name', 'planet', 'master_count', 'padawan_limit', 'is_active']
+
+  temple_id = ma.fields.UUID()
+  temple_name = ma.fields.String(required=True)
+  planet = ma.fields.String()
+  master_count = ma.fields.Integer()
+  padawan_limit = ma.fields.Integer()
+  is_active = ma.fields.Boolean(dump_default=True)
   
 temple_schema = TemplesSchema()
 temples_schema = TemplesSchema(many=True)
