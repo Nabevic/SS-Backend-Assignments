@@ -5,10 +5,7 @@ from db import db
 from models.users import Users, user_schema, users_schema
 from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate
-
-
-#Force Ranks
-force_ranks = ['youngling', 'padawan', 'knight', 'master', 'council_member', 'grand_master']
+from util.clearance import clearance
 
 
 
@@ -27,9 +24,10 @@ def add_user():
   return jsonify({"message": "user created","result": user_schema.dump(new_user)}), 201
 
 
+
 @authenticate_return_auth #Council+ rank required
 def get_all_users(auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
+  if auth_info.user.force_rank in clearance['Council']:
     user_query = db.session.query(Users).all()
 
     if not user_query:
@@ -39,8 +37,9 @@ def get_all_users(auth_info):
   return jsonify({"message": "unauthorized"}), 401
 
 
+
 @authenticate #any Authenticated User
-def user_by_id(user_id, auth_info):
+def user_by_id(user_id):
   user_query = db.session.query(Users).filter(Users.user_id == user_id).first()
 
   if not user_query:
@@ -49,9 +48,10 @@ def user_by_id(user_id, auth_info):
   return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
 
 
+
 @authenticate_return_auth #Grand Master rank, cascade delete tokens and assignments
 def delete_user(user_id, auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
+  if auth_info.user.force_rank in clearance['GrandMaster']:
     user_query = db.session.query(Users).filter(Users.user_id == user_id).first()
 
     if not user_query:

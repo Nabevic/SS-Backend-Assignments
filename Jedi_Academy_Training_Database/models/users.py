@@ -17,8 +17,7 @@ class Users(db.Model):
   joined_date = db.Column(db.DateTime(), nullable=False)
   is_active = db.Column(db.Boolean(), nullable=False, default=True)
 
-  auth = db.relationship('AuthTokens', back_populates='user')
-
+  auth = db.relationship('AuthTokens', back_populates='user', cascade='all' )
   master = db.relationship('Masters', foreign_keys='[Masters.user_id]', back_populates='user')
   padawan = db.relationship('Padawans', foreign_keys='[Padawans.user_id]', back_populates='user')
   temple = db.relationship('Temples', foreign_keys='[Users.temple_id]', back_populates='user')

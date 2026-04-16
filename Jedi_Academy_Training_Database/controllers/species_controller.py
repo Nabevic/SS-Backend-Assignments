@@ -4,12 +4,13 @@ from db import db
 from models.species import Species, species_schema, many_species_schema
 from lib.authenticate import authenticate_return_auth
 from util.reflection import populate_object
+from util.clearance import clearance
 
 
 
 @authenticate_return_auth
 def add_species(auth_info):
-  if auth_info.user.role =='admin':
+  if auth_info.user.force_rank in clearance['Master']:
     post_data = request.form if request.form else request.get_json()
 
     new_species = Species.new_species_obj()
@@ -23,6 +24,7 @@ def add_species(auth_info):
     
     return jsonify({"message": "species added", "result": species_schema.dump(new_species)}), 201
   return jsonify({"message": "unauthorized"}), 401
+
 
 
 def get_species(species_id): #make sure to include known Force users

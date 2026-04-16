@@ -12,9 +12,9 @@ def add_course_route():
 def enroll_padawan_route():
   controllers.enroll_padawan()
 
-@course.route('/courses/<difficulty_level>', methods= ['GET'])
-def get_course_route(difficulty_level):
-  return controllers.get_course(difficulty_level)
+@course.route('/courses/<difficulty>', methods= ['GET'])
+def get_course_route(difficulty):
+  return controllers.get_course(difficulty)
 
 @course.route('/course/<course_id>', methods= ['PUT'])
 def update_course_route(course_id):

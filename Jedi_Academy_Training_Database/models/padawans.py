@@ -19,7 +19,7 @@ class Padawans(db.Model):
 
   master = db.relationship("Masters", foreign_keys='[Padawans.master_id]', back_populates='padawans')
   user = db.relationship("Users", foreign_keys='[Padawans.user_id]', back_populates='padawan')
-  species = db.relationship("Species", foreign_keys='[Padawans.species_id]', back_populates='padawan')
+  species = db.relationship("Species", foreign_keys='[Padawans.species_id]', back_populates='force_users')
   courses = db.relationship("Courses", secondary=padawan_course_enrollment_table, back_populates='padawans')
 
   def __init__(self, master_id, user_id, species_id, padawan_name, age, training_level, graduation_date):
@@ -47,7 +47,7 @@ class PadawansSchema(ma.Schema):
   training_level = ma.fields.Integer()
   graduation_date = ma.fields.DateTime()
 
-  courses = ma.fields.Nested("CoursesSchema", many=True)
+  courses = ma.fields.Nested("CoursesSchema", many=True, only=['course_id', 'course_name', 'instructor_id'])
 
 padawan_schema = PadawansSchema()
 padawans_schema = PadawansSchema(many=True)

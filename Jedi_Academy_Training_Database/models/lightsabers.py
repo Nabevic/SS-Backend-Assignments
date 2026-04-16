@@ -33,15 +33,16 @@ class Lightsabers(db.Model):
 
 class LightsabersSchema(ma.Schema):
   class Meta:
-    fields = [ 'owner', 'crystal', 'lightsaber_name', 'hilt_material', 'blade_color', 'is_completed']
+    fields = [ 'lightsaber_id','owner', 'crystal', 'lightsaber_name', 'hilt_material', 'blade_color', 'is_completed']
 
+  lightsaber_id = ma.fields.UUID(required=True)
   lightsaber_name = ma.fields.String(allow_none=True)
   hilt_material = ma.fields.String(allow_none=True)
   blade_color = ma.fields.String(allow_none=True)
   is_completed = ma.fields.Boolean(allow_none=True)
 
   owner = ma.fields.Nested("UsersSchema", only=['user_id', 'username', 'force_rank', 'midi_count', 'is_active'])
-  crystal = ma.fields.Nested("Crystals")
+  crystal = ma.fields.Nested("CrystalsSchema")
 
 
 lightsaber_schema = LightsabersSchema()

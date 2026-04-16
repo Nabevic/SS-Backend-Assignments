@@ -13,7 +13,7 @@ class Species(db.Model):
   force_sensitive = db.Column(db.Boolean())
   avg_lifespan = db.Column(db.Integer())
 
-  padawan = db.relationship("Padawans", foreign_keys='[Padawans.species_id]', back_populates='species')
+  force_users = db.relationship("Padawans", foreign_keys='[Padawans.species_id]', back_populates='species')
 
   def __init__(self, species_name, homeworld, force_sensitive, avg_lifespan):
     self.species_name = species_name
@@ -26,13 +26,15 @@ class Species(db.Model):
   
 class SpeciesSchema(ma.Schema):
   class Meta:
-    fields =['species_id', 'species_name', 'homeworld', 'force_sensitive', 'avg_lifespan']
+    fields =['species_id', 'species_name', 'homeworld', 'force_sensitive', 'avg_lifespan', 'force_users']
 
   species_id = ma.fields.UUID()
   species_name = ma.fields.String(required=True)
   homeworld = ma.fields.String()
   force_sensitive = ma.fields.Boolean()
   avg_lifespan = ma.fields.Integer()
+
+  force_users = ma.fields.Nested("PadawansSchema", many=True, only=['padawan_id', 'padawan_name', 'age'])
 
 species_schema = SpeciesSchema()
 many_species_schema = SpeciesSchema(many=True)

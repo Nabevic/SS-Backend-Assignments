@@ -4,12 +4,13 @@ from db import db
 from models.lightsabers import Lightsabers, lightsaber_schema, lightsabers_schema
 from lib.authenticate import authenticate_return_auth
 from util.reflection import populate_object
+from util.clearance import clearance
 
 
 
 @authenticate_return_auth
 def add_lightsaber(auth_info):
-  if auth_info.user.role =='admin':
+  if auth_info.user.force_rank in clearance['Padawan']:
     post_data = request.form if request.form else request.get_json()
 
     new_lightsaber = Lightsabers.new_lightsaber_obj()
@@ -25,6 +26,7 @@ def add_lightsaber(auth_info):
   return jsonify({"message": "unauthorized"}), 401
 
 
+
 def get_lightsaber(owner_id):
   lightsaber_query = db.session.query(Lightsabers).filter(Lightsabers.owner_id == owner_id).first()
 
@@ -33,15 +35,17 @@ def get_lightsaber(owner_id):
   
   return jsonify({"message": "lightsaber found", "result": lightsaber_schema.dump(lightsaber_query)}), 200
 
+
+
 @authenticate_return_auth #Owner only
 def update_lightsaber(lightsaber_id, auth_info):
-  if auth_info.user.role =='admin':
-    lightsaber_query = db.session.query(Lightsabers).filter(Lightsabers.lightsaber_id == lightsaber_id).first()
+  lightsaber_query = db.session.query(Lightsabers).filter(Lightsabers.lightsaber_id == lightsaber_id).first()
+  if not lightsaber_query:
+    return jsonify({"message": "unable to update record; record not found"}), 404
+  
+  if auth_info.user.user_id == lightsaber_query.owner_id:
     post_data = request.form if request.form else request.get_json()
 
-    if not lightsaber_query:
-     return jsonify({"message": "unable to update record; record not found"}), 404
-    
     populate_object(lightsaber_query, post_data)
 
     db.session.commit()
@@ -49,13 +53,15 @@ def update_lightsaber(lightsaber_id, auth_info):
     return jsonify({"message": "lightsaber updated", "result":lightsaber_schema.dump(lightsaber_query)}),200
   return jsonify({"message": "unauthorized"}), 401
 
+
+
 @authenticate_return_auth #Owner or Council+
 def delete_lightsaber(lightsaber_id, auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
-    lightsaber_query = db.session.query(Lightsabers).filter(Lightsabers.lightsaber_id == lightsaber_id).first()
-
-    if not lightsaber_query:
-      return jsonify({"message": f"no lightsaber found with id {lightsaber_id}"}), 404
+  lightsaber_query = db.session.query(Lightsabers).filter(Lightsabers.lightsaber_id == lightsaber_id).first()
+  if not lightsaber_query:
+    return jsonify({"message": f"no lightsaber found with id {lightsaber_id}"}), 404
+  
+  if auth_info.user.force_rank in clearance['Council'] or auth_info.user.user_id == lightsaber_query.owner_id:
     try:
       db.session.delete(lightsaber_query)
       db.session.commit()

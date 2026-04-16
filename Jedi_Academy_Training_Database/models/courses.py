@@ -41,7 +41,7 @@ class CoursesSchema(ma.Schema):
   max_students = ma.fields.Integer(allow_none=True)
 
   master = ma.fields.Nested("MastersSchema")
-  padawans =ma.fields.Nested("PadawansSchema", many=True)
+  padawans =ma.fields.Nested("PadawansSchema", many=True, exclude=['courses'])
 
 course_schema = CoursesSchema()
 courses_schema = CoursesSchema(many=True)

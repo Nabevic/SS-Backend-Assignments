@@ -4,12 +4,13 @@ from db import db
 from models.masters import Masters, master_schema, masters_schema
 from lib.authenticate import authenticate_return_auth
 from util.reflection import populate_object
+from util.clearance import clearance
 
 
 
 @authenticate_return_auth
 def add_master(auth_info):
-  if auth_info.user.role =='admin':
+  if auth_info.user.force_rank in clearance['Council']:
     post_data = request.form if request.form else request.get_json()
 
     new_master = Masters.new_master_obj()
@@ -25,9 +26,10 @@ def add_master(auth_info):
   return jsonify({"message": "unauthorized"}), 401
 
 
+
 @authenticate_return_auth #Padawan+ rank required
 def get_all_masters(auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
+  if auth_info.user.force_rank in clearance['Padawan']:
     master_query = db.session.query(Masters).all()
 
     if not master_query:
@@ -37,9 +39,10 @@ def get_all_masters(auth_info):
   return jsonify({"message": "unauthorized"}), 401
 
 
+
 @authenticate_return_auth #Self or Council+
 def update_master(master_id, auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
+  if auth_info.user.force_rank in clearance['Council']:
     master_query = db.session.query(Masters).filter(Masters.master_id == master_id).first()
     post_data = request.form if request.form else request.get_json()
 
@@ -53,9 +56,10 @@ def update_master(master_id, auth_info):
   return jsonify({"message": "unauthorized"}), 401
 
 
+
 @authenticate_return_auth #Grand Master rank, reassign padawans
 def delete_master(master_id, auth_info):
-  if auth_info.user.role == 'admin' or auth_info.user.role == 'user':
+  if auth_info.user.force_rank in clearance['GrandMaster']:
     master_query = db.session.query(Masters).filter(Masters.master_id == master_id).first()
 
     if not master_query:
