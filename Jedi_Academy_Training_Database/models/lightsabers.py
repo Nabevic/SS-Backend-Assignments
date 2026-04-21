@@ -16,7 +16,7 @@ class Lightsabers(db.Model):
   blade_color = db.Column(db.String())
   is_completed = db.Column(db.Boolean())
 
-  owner = db.relationship("Users", foreign_keys='[Lightsabers.owner_id]', back_populates='lightsaber')
+  owner = db.relationship("Users", foreign_keys='[Lightsabers.owner_id]', back_populates='lightsabers')
   crystal = db.relationship("Crystals", foreign_keys='[Lightsabers.crystal_id]', back_populates='lightsaber')
 
   def __init__(self, owner_id, crystal_id, lightsaber_name, hilt_material, blade_color, is_completed):

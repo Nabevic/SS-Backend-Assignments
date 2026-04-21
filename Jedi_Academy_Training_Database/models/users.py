@@ -17,11 +17,11 @@ class Users(db.Model):
   joined_date = db.Column(db.DateTime(), nullable=False)
   is_active = db.Column(db.Boolean(), nullable=False, default=True)
 
-  auth = db.relationship('AuthTokens', back_populates='user', cascade='all' )
-  master = db.relationship('Masters', foreign_keys='[Masters.user_id]', back_populates='user')
-  padawan = db.relationship('Padawans', foreign_keys='[Padawans.user_id]', back_populates='user')
+  auth = db.relationship('AuthTokens', foreign_keys='[AuthTokens.user_id]', back_populates='user', cascade='all' )
+  master = db.relationship('Masters', foreign_keys='[Masters.user_id]', back_populates='user', cascade='all')
+  padawan = db.relationship('Padawans', foreign_keys='[Padawans.user_id]', back_populates='user', cascade='all')
   temple = db.relationship('Temples', foreign_keys='[Users.temple_id]', back_populates='user')
-  lightsaber = db.relationship('Lightsabers', foreign_keys='[Lightsabers.owner_id]', back_populates='owner')
+  lightsabers = db.relationship('Lightsabers', foreign_keys='[Lightsabers.owner_id]', back_populates='owner', cascade='all')
 
 
   def __init__(self, temple_id, username, email, password, force_rank, midi_count, joined_date, is_active=True):
@@ -41,17 +41,41 @@ class Users(db.Model):
 
 class UsersSchema(ma.Schema):
   class Meta:
-    fields = ['user_id','temple_id', 'username', 'email', 'force_rank', 'midi_count', 'joined_date', 'is_active']
+    fields = ['user_id','temple_id', 'username', 'email', 'force_rank', 'midi_count', 'joined_date', 'is_active', 'master']
 
   user_id = ma.fields.UUID()
-  temple_id = ma.fields.UUID()
+  temple_id = ma.fields.UUID(allow_none=True)
   username = ma.fields.String(required=True)
   email = ma.fields.String(required=True)
   force_rank = ma.fields.String()
   midi_count = ma.fields.Integer(allow_none=True)
   joined_date = ma.fields.String(required=True,)
   is_active = ma.fields.Boolean(required=True, dump_default=True)
-
+  
+  master = ma.fields.Nested("MastersSchema", only=['master_id'])
 
 user_schema = UsersSchema()
 users_schema = UsersSchema(many=True)
+
+
+class UserProfileSchema(UsersSchema):
+  class Meta:
+    fields = ['user_id', 'username', 'email', 'force_rank', 'midi_count', 'joined_date', 'is_active', 'master', 'padawan', 'temple', 'lightsabers']
+
+  master = ma.fields.Nested("MastersSchema", many=True)
+  padawan = ma.fields.Nested("PadawansSchema", many=True)
+  temple = ma.fields.Nested("TemplesSchema")
+  lightsabers = ma.fields.Nested("LightsabersSchema", many=True, exclude=['owner'])
+
+user_profile_schema = UserProfileSchema()
+
+
+class UsersTempleSchema(UsersSchema):
+  class Meta:
+    fields = ['user_id','padawan', 'master']
+
+  padawan = ma.fields.Nested("PadawansSchema", only=['padawan_id', 'padawan_name', 'user_id'], many=True)
+  master = ma.fields.Nested("MastersSchema", only=['master_id', 'master_name', 'user_id'], many=True)
+
+user_temple_schema = UsersTempleSchema()
+users_temple_schema = UsersTempleSchema(many=True)

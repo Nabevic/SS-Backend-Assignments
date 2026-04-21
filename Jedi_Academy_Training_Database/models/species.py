@@ -13,7 +13,7 @@ class Species(db.Model):
   force_sensitive = db.Column(db.Boolean())
   avg_lifespan = db.Column(db.Integer())
 
-  force_users = db.relationship("Padawans", foreign_keys='[Padawans.species_id]', back_populates='species')
+  force_users = db.relationship("Padawans", foreign_keys='[Padawans.species_id]', back_populates='species', cascade='all')
 
   def __init__(self, species_name, homeworld, force_sensitive, avg_lifespan):
     self.species_name = species_name

@@ -2,9 +2,8 @@ from flask import jsonify, request
 
 from db import db
 from models.species import Species, species_schema, many_species_schema
-from lib.authenticate import authenticate_return_auth
+from lib.authenticate import authenticate_return_auth, clearance
 from util.reflection import populate_object
-from util.clearance import clearance
 
 
 
@@ -17,17 +16,17 @@ def add_species(auth_info):
     populate_object(new_species, post_data)
     try:
       db.session.add(new_species)
-      db.session.commit()
     except Exception as e:
       db.session.rollback()
       return jsonify({"message": f"unable to add species. {e}"}), 400
     
+    db.session.commit()
     return jsonify({"message": "species added", "result": species_schema.dump(new_species)}), 201
   return jsonify({"message": "unauthorized"}), 401
 
 
 
-def get_species(species_id): #make sure to include known Force users
+def get_species(species_id):
   species_query = db.session.query(Species).filter(Species.species_id == species_id).first()
 
   if not species_query:

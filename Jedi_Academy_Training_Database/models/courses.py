@@ -15,7 +15,7 @@ class Courses(db.Model):
   duration_weeks = db.Column(db.Integer())
   max_students = db.Column(db.Integer())
 
-  master = db.relationship("Masters", foreign_keys='[Courses.instructor_id]', back_populates='courses')
+  master = db.relationship("Masters", foreign_keys='[Courses.instructor_id]', back_populates='courses_teaching')
   padawans = db.relationship("Padawans", secondary=padawan_course_enrollment_table, back_populates='courses')
 
   def __init__(self, instructor_id, course_name, difficulty, duration_weeks, max_students):
@@ -40,8 +40,8 @@ class CoursesSchema(ma.Schema):
   duration_weeks = ma.fields.Integer(allow_none=True)
   max_students = ma.fields.Integer(allow_none=True)
 
-  master = ma.fields.Nested("MastersSchema")
-  padawans =ma.fields.Nested("PadawansSchema", many=True, exclude=['courses'])
+  master = ma.fields.Nested("MastersSchema", exclude=['courses_teaching'])
+  padawans = ma.fields.Nested("PadawansSchema", many=True, exclude=['courses'])
 
 course_schema = CoursesSchema()
 courses_schema = CoursesSchema(many=True)

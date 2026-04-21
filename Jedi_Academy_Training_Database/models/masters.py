@@ -17,7 +17,7 @@ class Masters(db.Model):
 
   user = db.relationship("Users", foreign_keys='[Masters.user_id]', back_populates='master')
   padawans = db.relationship("Padawans", foreign_keys='[Padawans.master_id]', back_populates='master')
-  courses = db.relationship("Courses", foreign_keys='[Courses.instructor_id]', back_populates='master')
+  courses_teaching = db.relationship("Courses", foreign_keys='[Courses.instructor_id]', back_populates='master', cascade='all')
 
   def __init__(self, user_id, master_name, specialization, years_training, max_padawans):
     
@@ -32,7 +32,7 @@ class Masters(db.Model):
   
 class MastersSchema(ma.Schema):
   class Meta:
-    fields = ['master_id', 'user_id', 'master_name', 'specialization', 'years_training', 'max_padawans']
+    fields = ['master_id', 'user_id', 'master_name', 'specialization', 'years_training', 'max_padawans', 'courses_teaching']
 
   master_id = ma.fields.UUID()
   user_id = ma.fields.UUID(required=True)
@@ -40,6 +40,8 @@ class MastersSchema(ma.Schema):
   specialization = ma.fields.String(allow_none=True)
   years_training = ma.fields.Integer(allow_none=True)
   max_padawans = ma.fields.Integer(allow_none=True)
+
+  courses_teaching = ma.fields.Nested("CoursesSchema", many=True, exclude=['master', 'padawans', 'instructor_id'])
 
 master_schema = MastersSchema()
 masters_schema = MastersSchema(many=True)

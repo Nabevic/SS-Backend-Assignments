@@ -9,7 +9,7 @@ class Padawans(db.Model):
   __tablename__ = "Padawans"
 
   padawan_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-  master_id = db.Column(UUID(as_uuid=True), db.ForeignKey('Masters.master_id'), nullable=False)
+  master_id = db.Column(UUID(as_uuid=True), db.ForeignKey('Masters.master_id'))
   user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('Users.user_id'), nullable=False)
   species_id = db.Column(UUID(as_uuid=True), db.ForeignKey('Species.species_id'), nullable=False)
   padawan_name = db.Column(db.String(), unique=True)

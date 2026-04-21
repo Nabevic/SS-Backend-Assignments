@@ -10,7 +10,7 @@ def add_course_route():
 
 @course.route('/enrollment', methods=['POST'])
 def enroll_padawan_route():
-  controllers.enroll_padawan()
+  return controllers.enroll_padawan()
 
 @course.route('/courses/<difficulty>', methods= ['GET'])
 def get_course_route(difficulty):

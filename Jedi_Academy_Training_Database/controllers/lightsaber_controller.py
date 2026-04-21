@@ -2,9 +2,8 @@ from flask import jsonify, request
 
 from db import db
 from models.lightsabers import Lightsabers, lightsaber_schema, lightsabers_schema
-from lib.authenticate import authenticate_return_auth
+from lib.authenticate import authenticate_return_auth, clearance
 from util.reflection import populate_object
-from util.clearance import clearance
 
 
 
@@ -17,11 +16,11 @@ def add_lightsaber(auth_info):
     populate_object(new_lightsaber, post_data)
     try:
       db.session.add(new_lightsaber)
-      db.session.commit()
     except Exception as e:
       db.session.rollback()
       return jsonify({"message": f"unable to add lightsaber. {e}"}), 400
     
+    db.session.commit()
     return jsonify({"message": "lightsaber added", "result": lightsaber_schema.dump(new_lightsaber)}), 201
   return jsonify({"message": "unauthorized"}), 401
 
@@ -64,10 +63,11 @@ def delete_lightsaber(lightsaber_id, auth_info):
   if auth_info.user.force_rank in clearance['Council'] or auth_info.user.user_id == lightsaber_query.owner_id:
     try:
       db.session.delete(lightsaber_query)
-      db.session.commit()
     except Exception as e:
       db.session.rollback()
       return jsonify({"message": f"unable to delete record. {e}"}), 400
+    
+    db.session.commit()
     return jsonify({"message": "lightsaber deleted", "result": lightsaber_schema.dump(lightsaber_query)}), 200
   return jsonify({"message": "unauthorized"}), 401
 

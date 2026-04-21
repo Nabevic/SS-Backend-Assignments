@@ -6,6 +6,16 @@ from uuid import UUID
 from db import db
 from models.auth_tokens import AuthTokens
 
+#Force Ranks = youngling, padawan, knight, master, council_member, grand_mstr
+clearance = {
+  "Basic": ['youngling', 'padawan','knight','master','council_member', 'grand_mstr'],
+  "Padawan": ['padawan','knight','master','council_member', 'grand_mstr'],
+  "Knight": ['knight','master','council_member', 'grand_mstr'],
+  "Master": ['master','council_member', 'grand_mstr'],
+  "Council": ['council_member', 'grand_mstr'],
+  "GrandMaster": 'grand_mstr'
+}
+
 def validate_uuid4(uuid_string):
   try:
     UUID(uuid_string, version=4)

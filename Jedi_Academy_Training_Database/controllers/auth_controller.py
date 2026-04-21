@@ -41,6 +41,7 @@ def add_auth_token():
     db.session.commit()
 
     return jsonify({"message":"auth success", "auth_info": auth_token_schema.dump(new_token)}), 201
+  return jsonify({"mssage":"user not found"}), 404
   
 
 @authenticate_return_auth
