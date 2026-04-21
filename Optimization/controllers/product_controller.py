@@ -22,9 +22,10 @@ def add_product():
   return jsonify({"message": "product created","result": product_schema.dump(new_product)}), 201
 
 
-def add_product_category_association(product_id, category_id):
-  product_query = db.session.query(Products).filter(Products.product_id == product_id).first()
-  category_query = db.session.query(Categories).filter(Categories.category_id == category_id).first()
+def add_product_category_association():
+  post_data = request.form if request.form else request.get_json()
+  product_query = db.session.query(Products).filter(Products.product_id == post_data['product_id']).first()
+  category_query = db.session.query(Categories).filter(Categories.category_id == post_data['category_id']).first()
 
   if not product_query:
     return jsonify({"message":"product id does not exist"}), 404
