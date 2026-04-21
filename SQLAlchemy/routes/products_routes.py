@@ -28,7 +28,7 @@ def product_by_id(product_id):
 def get_products_by_company_id(company_id):
   return controllers.get_products_by_company_id(company_id)
 
-@product.route('/product/delete/<product_id>', methods=['DELETE'])
-def delete_product(product_id):
-  return controllers.delete_product(product_id)
+@product.route('/product/delete', methods=['DELETE'])
+def delete_product():
+  return controllers.delete_product()
 

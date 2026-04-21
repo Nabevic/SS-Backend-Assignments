@@ -16,6 +16,6 @@ def get_all_categories():
 def category_by_id(category_id):
   return controllers.category_by_id(category_id)
 
-@category.route('/category/delete/<category_id>', methods=['DELETE'])
-def delete_category(category_id):
-  return controllers.delete_category(category_id)
+@category.route('/category/delete', methods=['DELETE'])
+def delete_category():
+  return controllers.delete_category()

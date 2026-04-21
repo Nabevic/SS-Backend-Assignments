@@ -72,11 +72,12 @@ def warranty_by_id(warranty_id):
     return jsonify({"message": "warranty found", "results": warranty_record}), 200
   
   
-def delete_warranty(warranty_id):
-  warranty = db.session.query(Warranties).filter(Warranties.warranty_id == warranty_id).first()
+def delete_warranty():
+  post_data = request.form if request.form else request.get_json()
+  warranty = db.session.query(Warranties).filter(Warranties.warranty_id == post_data["warranty_id"]).first()
 
   if not warranty:
-    return jsonify({"message":f"warranty by id {warranty_id} does not exist"}), 400
+    return jsonify({"message":f"warranty by id {post_data["warranty_id"]} does not exist"}), 400
   
   else: 
     deleted_record = construct_record(warranty)

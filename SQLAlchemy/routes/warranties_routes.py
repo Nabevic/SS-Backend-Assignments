@@ -13,6 +13,6 @@ def add_warranty():
 def warranty_by_id(warranty_id):
   return controllers.warranty_by_id(warranty_id)
 
-@warranty.route('/warranty/delete/<warranty_id>', methods=['DELETE'])
-def delete_warranty(warranty_id):
-  return controllers.delete_warranty(warranty_id)
+@warranty.route('/warranty/delete', methods=['DELETE'])
+def delete_warranty():
+  return controllers.delete_warranty()

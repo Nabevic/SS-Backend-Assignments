@@ -86,14 +86,15 @@ def company_by_id(company_id):
     return jsonify({"message": "product found", "results": company_record}), 200
   
   
-def delete_company(company_id):
-  if company_id.isnumeric():
+def delete_company():
+  post_data = request.form if request.form else request.get_json()
+  if post_data["company_id"].isnumeric():
     return jsonify({"message": f"Invalid id. Company id must be a valid UUID"}), 400 
   
-  company = db.session.query(Companies).filter(Companies.company_id == company_id).first()
+  company = db.session.query(Companies).filter(Companies.company_id == post_data["company_id"]).first()
 
   if not company:
-    return jsonify({"message":f"company by id {company_id} does not exist"}), 400
+    return jsonify({"message":f"company by id {post_data["company_id"]} does not exist"}), 400
   
   try:
     db.session.delete(company)

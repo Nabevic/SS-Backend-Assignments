@@ -205,13 +205,14 @@ def get_products_by_company_id(company_id):
   return jsonify({"message": "products found", "result": product_list}), 200
 
 
-def delete_product(product_id):
-  if product_id.isnumeric():
+def delete_product():
+  post_data = request.form if request.form else request.get_json()
+  if post_data["product_id"].isnumeric():
     return jsonify({"message": f"Invalid id. product id must be a valid UUID"}), 400
   
-  product = db.session.query(Products).filter(Products.product_id == product_id).first()
+  product = db.session.query(Products).filter(Products.product_id == post_data["product_id"]).first()
   if not product:
-    return jsonify({"message": f"product not found with id {product_id}"}), 404
+    return jsonify({"message": f"product not found with id {post_data["product_id"]}"}), 404
   
   deleted_record = construct_record(product)
 

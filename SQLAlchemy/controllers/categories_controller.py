@@ -81,11 +81,13 @@ def category_by_id(category_id):
     return jsonify({"message": "category found", "results": category_record}), 200
 
 
-def delete_category(category_id):
-  category = db.session.query(Categories).filter(Categories.category_id == category_id).first()
+def delete_category():
+  post_data = request.form if request.form else request.get_json()
+
+  category = db.session.query(Categories).filter(Categories.category_id == post_data['category_id']).first()
 
   if not category:
-    return jsonify({"message":f"category by id {category_id} does not exist"}), 400
+    return jsonify({"message":f"category by id {post_data['category_id']} does not exist"}), 400
   
   else: 
     deleted_record = construct_record(category)
