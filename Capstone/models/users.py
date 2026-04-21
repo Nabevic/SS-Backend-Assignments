@@ -20,7 +20,7 @@ class Users(db.Model):
   active = db.Column(db.Boolean(), nullable=False, default=True)
 
   auth = db.relationship('AuthTokens', back_populates='user')
-  address = db.relationship('Addresses', foreign_keys='[Addresses.address_id]', cascade='all' , back_populates='user')
+  address = db.relationship('Addresses', foreign_keys='[Addresses.address_id]', cascade='all', back_populates='user')
 
   def __init__(self, address, first_name, last_name, email, password, birthdate, phone, active, role):
     self.address = address
