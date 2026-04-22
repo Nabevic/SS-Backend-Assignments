@@ -16,8 +16,8 @@ class Addresses(db.Model):
   state = db.Column(db.String(), nullable=False)
   postal_code = db.Column(db.String(), nullable=False)
 
-  user = db.relationship("Users", foreign_keys='[Users.user_id]', back_populates='address')
-  event = db.relationship("Events", foreign_keys='[Events.location]', cascade='all', back_populates='location')
+  user = db.relationship("Users", foreign_keys='[Users.user_address]', back_populates='address')
+  event = db.relationship("Events", foreign_keys='[Events.event_address]', cascade='all', back_populates='address')
 
   def __init__(self, address_1, address_2, address_3, city, state, postal_code):
     self.address_1 = address_1
@@ -28,7 +28,7 @@ class Addresses(db.Model):
     self.postal_code = postal_code 
   
   def new_address_obj():
-    return Addresses('','','','','','','','')
+    return Addresses('','','','','','')
   
 
 class AddressesSchema(ma.Schema):

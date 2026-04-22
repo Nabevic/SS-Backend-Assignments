@@ -14,9 +14,9 @@ def add_event_route():
 def get_all_events_route():
   return controllers.get_all_events()
 
-@event.route('/event/<date>', methods=['GET'])
-def get_event_by_date_route(date):
-  return controllers.get_event_by_date(date)
+@event.route('/events/<date>', methods=['GET'])
+def get_events_by_date_route(date):
+  return controllers.get_events_by_date(date)
 
 @event.route('/event/<event_id>', methods=['GET', 'PUT'])
 def event_by_id_route(event_id):

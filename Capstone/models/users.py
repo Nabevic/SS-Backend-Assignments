@@ -9,7 +9,7 @@ class Users(db.Model):
   __tablename__ = 'Users'
 
   user_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-  address = db.Column(UUID(as_uuid=True), db.ForiegnKey('Addresses.address_id'))
+  user_address = db.Column(UUID(as_uuid=True), db.ForeignKey("Addresses.address_id"))
   first_name = db.Column(db.String(), nullable=False)
   last_name = db.Column(db.String(), nullable=False)
   email = db.Column(db.String(), nullable=False, unique=True)
@@ -20,10 +20,11 @@ class Users(db.Model):
   active = db.Column(db.Boolean(), nullable=False, default=True)
 
   auth = db.relationship('AuthTokens', back_populates='user')
-  address = db.relationship('Addresses', foreign_keys='[Addresses.address_id]', cascade='all', back_populates='user')
+  address = db.relationship('Addresses', foreign_keys='[Users.user_address]', cascade='all', back_populates='user')
+  event = db.relationship("Events", foreign_keys='[Events.host_id]', back_populates='host')
 
-  def __init__(self, address, first_name, last_name, email, password, birthdate, phone, active, role):
-    self.address = address
+  def __init__(self, user_address, first_name, last_name, email, password, birthdate, phone, role, active):
+    self.user_address = user_address
     self.first_name = first_name
     self.last_name = last_name
     self.email = email
@@ -39,10 +40,10 @@ class Users(db.Model):
 
 class UsersSchema(ma.Schema):
   class Meta:
-    fields = [ 'user_id', 'address', 'first_name', 'last_name', 'email', 'password', 'birthdate', 'phone', 'role', 'active']
+    fields = [ 'user_id', 'user_address', 'first_name', 'last_name', 'email', 'birthdate', 'phone', 'role', 'active']
 
   user_id = ma.fields.UUID()
-  address = ma.fields.UUID()
+  user_address = ma.fields.UUID()
   first_name = ma.fields.String(required=True)
   last_name = ma.fields.String(required=True)
   email = ma.fields.String(required=True)
