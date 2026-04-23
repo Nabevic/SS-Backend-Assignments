@@ -37,15 +37,14 @@ def get_all_users(auth_info):
   return jsonify({"message": "users retrieved", "results": users_schema.dump(user_query)}), 200
 
 
-
 @authenticate_return_auth 
-def user_by_id(user_id, auth_info):
-  user_query = db.session.query(Users).filter(Users.user_id == user_id).first()
+def get_active_users(auth_info):
+  user_query = db.session.query(Users).filter(Users.active == True).all()
 
   if not user_query:
-    return jsonify({"message": "no user found"}), 404
+    return jsonify({"message": "no users found"}), 404
 
-  return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+  return jsonify({"message": "users retrieved", "results": users_schema.dump(user_query)}), 200
 
 
 @authenticate_return_auth
@@ -58,14 +57,33 @@ def get_user_profile(auth_info):
   return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
 
 
+@authenticate_return_auth 
+def user_by_id(user_id, auth_info):
+  user_query = db.session.query(Users).filter(Users.user_id == user_id).first()
+  if not user_query:
+    return jsonify({"message": "no user found"}), 404
+
+  if request.method == "PUT":
+    put_data = request.form if request.form else request.get_json()
+    populate_object(user_query, put_data)
+    try:
+      db.session.commit()
+    except Exception as e:
+      db.session.rollback()
+      return jsonify({"message": f"unable to update user. {e}"}), 400
+    return jsonify({"message": "user updated", "results": user_schema.dump(user_query)}), 200
+    
+  elif request.method == 'GET':
+    return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+
 
 @authenticate_return_auth
-def delete_user(user_id, auth_info):
-
-  user_query = db.session.query(Users).filter(Users.user_id == user_id).first()
-
+def delete_user(auth_info):
+  request_data = request.form if request.form else request.json
+  user_query = db.session.query(Users).filter(Users.user_id == request_data["user_id"]).first()
   if not user_query:
-    return jsonify({"message": f"no user found with id {user_id}"}), 404
+    return jsonify({"message": f"no user found with id {request_data['user_id']}"}), 400
+  
   try:
     db.session.delete(user_query)
   except Exception as e:

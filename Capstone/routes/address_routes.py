@@ -18,6 +18,6 @@ def get_all_addresses_route():
 def address_by_id_route(address_id):
   return controllers.address_by_id(address_id)
 
-@address.route('/address', methods=['DELETE'])
+@address.route('/address/delete', methods=['DELETE'])
 def delete_address_route():
   return controllers.delete_address()

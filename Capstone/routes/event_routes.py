@@ -1,5 +1,4 @@
 from flask import Blueprint
-
 import controllers
 
 
