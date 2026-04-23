@@ -22,6 +22,7 @@ class Users(db.Model):
   auth = db.relationship('AuthTokens', back_populates='user')
   address = db.relationship('Addresses', foreign_keys='[Users.user_address]', back_populates='user')
   event = db.relationship("Events", foreign_keys='[Events.host_id]', back_populates='host')
+  borrower = db.relationship("GameLoans", foreign_keys='[GameLoans.borrower_id]', back_populates='user')
 
   def __init__(self, user_address, first_name, last_name, email, password, birthdate, phone, role, active):
     self.user_address = user_address
