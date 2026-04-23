@@ -21,7 +21,7 @@ class BGGRatings(db.Model):
     self.url = url
 
   def new_rating_obj():
-    return BGGRatings('','',0.0,'')
+    return BGGRatings('',0.0,'')
   
   
 class BGGRatingsSchema(ma.Schema):

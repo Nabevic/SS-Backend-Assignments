@@ -26,7 +26,7 @@ class GameLoans(db.Model):
     self.notes = notes
 
   def new_loan_obj():
-    return GameLoans('','','','','','')
+    return GameLoans('','','','','')
   
 
 class GameLoansSchema(ma.Schema):
