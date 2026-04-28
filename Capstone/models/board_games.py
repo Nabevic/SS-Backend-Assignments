@@ -12,39 +12,39 @@ class BoardGames(db.Model):
   owner = db.Column(UUID(as_uuid=True), db.ForeignKey('Users.user_id'))
   title = db.Column(db.String(), unique=True, nullable=False)
   description = db.Column(db.String())
-  age_range = db.Column(db.String())
-  player_count = db.Column(db.String())
-  play_time = db.Column(db.Integer())
+  min_age = db.Column(db.Integer())
+  max_players = db.Column(db.Integer())
+  play_time = db.Column(db.String())
 
-  bgg_rating = db.relationship("BGGRatings", foreign_keys='[BGGRatings.game_id]', back_populates='boardgame')
-  loan = db.relationship("GameLoans", foreign_keys='[GameLoans.game_id]', back_populates='boardgame')
-  categories = db.relation("Categories", secondary=games_categories_association_table, back_populates='board_games')
+  bgg_rating = db.relationship("BGGRatings", foreign_keys='[BGGRatings.game_id]', back_populates='board_game', uselist=False)
+  loan = db.relationship("GameLoans", foreign_keys='[GameLoans.game_id]', back_populates='board_game')
+  categories = db.relationship("Categories", secondary=games_categories_association_table, back_populates='board_games')
 
-  def __init__(self, owner, title, description, age_range, player_count, play_time):
+  def __init__(self, owner, title, description, min_age, max_players, play_time):
     self.owner = owner
     self.title = title
     self.description = description
-    self.age_range = age_range
-    self.player_count = player_count
+    self.min_age = min_age
+    self.max_players = max_players
     self.play_time = play_time
 
   def new_board_game_obj():
-    return BoardGames('','','','','', 0)
+    return BoardGames('','','',0,0,'')
   
 class BoardGamesSchema(ma.Schema):
   class Meta:
-    fields = ['game_id', 'owner', 'title', 'description', 'age_range', 'player_count', 'play_time', 'bbg_rating', 'loan']
+    fields = ['game_id', 'owner', 'title', 'description', 'min_age', 'max_players', 'play_time', 'bgg_rating', 'loan']
     
 
   game_id = ma.fields.UUID()
   owner = ma.fields.UUID()
   title = ma.fields.String(required=True)
   description = ma.fields.String()
-  age_range = ma.fields.String()
-  player_count = ma.fields.String()
-  play_time = ma.fields.Integer()
+  min_age = ma.fields.Integer()
+  max_players = ma.fields.Integer()
+  play_time = ma.fields.String()
 
-  bbg_rating = ma.fields.Nested("BGGRatingsSchema")
+  bgg_rating = ma.fields.Nested("BGGRatingsSchema")
   loan = ma.fields.Nested("GameLoansSchema")
   # categories
 

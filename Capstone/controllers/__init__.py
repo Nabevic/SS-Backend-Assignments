@@ -5,3 +5,4 @@ from .event_controller import *
 from .bgg_rating_controller import *
 from .board_game_controller import *
 from .game_loan_controller import *
+from .category_controller import *

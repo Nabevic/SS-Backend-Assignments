@@ -14,13 +14,13 @@ def add_loan_record_route():
 def get_loan_records_route():
   return controllers.get_loan_records()
 
-@gameloan.route('/gameloans/<game_id>', methods=['GET'])
-def get_loan_records_by_game_route(game_id):
-  return controllers.get_loan_records_by_game(game_id)
-
 @gameloan.route('/gameloans/<borrower_id>', methods=['GET'])
 def get_loan_records_by_borrower_route(borrower_id):
   return controllers.get_loan_records_by_borrower(borrower_id)
+
+@gameloan.route('/gameloan/boardgame/<game_id>', methods=['GET'])
+def get_loan_records_by_game_route(game_id):
+  return controllers.get_loan_records_by_game(game_id)
 
 @gameloan.route('/gameloan/<loan_id>', methods=['GET','PUT'])
 def loan_record_by_id_route(loan_id):

@@ -5,3 +5,4 @@ from .board_game_routes import boardgame
 from .event_routes import event
 from .game_loan_routes import gameloan
 from .user_routes import user
+from .category_routes import category
