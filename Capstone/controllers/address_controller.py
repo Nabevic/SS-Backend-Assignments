@@ -2,13 +2,16 @@ from flask import jsonify, request
 from db import db
 from models.addresses import Addresses, address_schema, addresses_schema
 from util.reflection import populate_object
-from lib.authenticate import authenticate_return_auth, authenticate
+from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
 
 
 
-
-def add_address():
+@authenticate_return_auth
+def add_address(auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
+  
   post_data = request.form if request.form else request.json
 
   new_address = Addresses.new_address_obj()
@@ -27,6 +30,9 @@ def add_address():
 
 @authenticate_return_auth 
 def get_all_addresses(auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
+  
   address_query = db.session.query(Addresses).all()
 
   if not address_query:
@@ -37,11 +43,17 @@ def get_all_addresses(auth_info):
 
 @authenticate_return_auth 
 def address_by_id(address_id, auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
+  
   address_query = db.session.query(Addresses).filter(Addresses.address_id == address_id).first()
   if not address_query:
     return jsonify({"message": "no address found"}), 404
 
   if request.method == "PUT":
+    if auth_info.user.role not in auth_level['admin']:
+      return jsonify({"message": "unauthorized"}), 401
+    
     put_data = request.form if request.form else request.get_json()
     populate_object(address_query, put_data)
     try:
@@ -58,6 +70,8 @@ def address_by_id(address_id, auth_info):
 
 @authenticate_return_auth
 def delete_address(auth_info):
+  if auth_info.user.role not in auth_level['super']:
+    return jsonify({"message": "unauthorized"}), 401
   request_data = request.form if request.form else request.json
   address_query = db.session.query(Addresses).filter(Addresses.address_id == request_data["address_id"]).first()
   if not address_query:

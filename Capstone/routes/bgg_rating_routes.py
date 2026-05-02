@@ -18,7 +18,7 @@ def get_ratings_route():
 def rating_by_id_route(rating_id):
   return controllers.rating_by_id(rating_id)
 
-@rating.route('/rating/<game_id>', methods=['GET'])
+@rating.route('/rating/game/<game_id>', methods=['GET'])
 def rating_by_game_id_route(game_id):
   return controllers.rating_by_game_id(game_id)
 

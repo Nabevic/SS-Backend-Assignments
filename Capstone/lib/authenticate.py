@@ -7,6 +7,12 @@ from db import db
 from models.auth_tokens import AuthTokens
 
 
+auth_level = {
+  "super":['super'],
+  "admin":['admin','super'],
+  "user":['user','admin','super']
+}
+
 def validate_uuid4(uuid_string):
   try:
     UUID(uuid_string, version=4)

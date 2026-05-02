@@ -19,7 +19,7 @@ class Users(db.Model):
   role = db.Column(db.String(), nullable=False, default='user')
   active = db.Column(db.Boolean(), nullable=False, default=True)
 
-  auth = db.relationship('AuthTokens', back_populates='user')
+  auth = db.relationship('AuthTokens', back_populates='user', cascade='all')
   address = db.relationship('Addresses', foreign_keys='[Users.user_address]', back_populates='user')
   event = db.relationship("Events", foreign_keys='[Events.host_id]', back_populates='host')
   borrower = db.relationship("GameLoans", foreign_keys='[GameLoans.borrower_id]', back_populates='user')
@@ -36,7 +36,7 @@ class Users(db.Model):
     self.active = active
 
   def new_user_obj():
-    return Users('','','','','','','','user',True)
+    return Users(None,'','','','','','','user',True)
     
 
 class UsersSchema(ma.Schema):
@@ -44,7 +44,7 @@ class UsersSchema(ma.Schema):
     fields = [ 'user_id', 'user_address', 'first_name', 'last_name', 'email', 'birthdate', 'phone', 'role', 'active']
 
   user_id = ma.fields.UUID()
-  user_address = ma.fields.UUID()
+  user_address = ma.fields.UUID(allow_none=True)
   first_name = ma.fields.String(required=True)
   last_name = ma.fields.String(required=True)
   email = ma.fields.String(required=True)

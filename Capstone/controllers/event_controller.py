@@ -2,11 +2,13 @@ from flask import jsonify, request
 from db import db
 from models.events import Events, event_schema, events_schema
 from util.reflection import populate_object
-from lib.authenticate import authenticate_return_auth, authenticate
+from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
 
-
-def add_event():
+@authenticate_return_auth 
+def add_event(auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   post_data = request.form if request.form else request.json
 
   new_event = Events.new_event_obj()
@@ -24,6 +26,8 @@ def add_event():
 
 @authenticate_return_auth 
 def get_all_events(auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   event_query = db.session.query(Events).all()
 
   if not event_query:
@@ -34,6 +38,8 @@ def get_all_events(auth_info):
 
 @authenticate_return_auth 
 def get_events_by_date(date, auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   event_query = db.session.query(Events).filter(Events.date == date).all()
 
   if not event_query:
@@ -44,11 +50,15 @@ def get_events_by_date(date, auth_info):
 
 @authenticate_return_auth 
 def event_by_id(event_id, auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   event_query = db.session.query(Events).filter(Events.event_id == event_id).first()
   if not event_query:
     return jsonify({"message": "no event found"}), 404
 
   if request.method == "PUT":
+    if auth_info.user.role not in auth_level['admin']:
+      return jsonify({"message": "unauthorized"}), 401
     put_data = request.form if request.form else request.get_json()
     populate_object(event_query, put_data)
 
@@ -65,6 +75,8 @@ def event_by_id(event_id, auth_info):
 
 @authenticate_return_auth
 def delete_event(auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
   request_data = request.form if request.form else request.json
   event_query = db.session.query(Events).filter(Events.event_id == request_data["event_id"]).first()
   if not event_query:

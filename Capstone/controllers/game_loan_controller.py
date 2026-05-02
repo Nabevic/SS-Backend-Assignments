@@ -2,10 +2,12 @@ from flask import jsonify, request
 from db import db
 from models.game_loans import GameLoans, game_loan_schema, game_loans_schema
 from util.reflection import populate_object
-from lib.authenticate import authenticate_return_auth, authenticate
+from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
-
-def add_loan_record():
+@authenticate_return_auth
+def add_loan_record(auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
   post_data = request.form if request.form else request.json
 
   new_loan = GameLoans.new_loan_obj()
@@ -20,8 +22,10 @@ def add_loan_record():
   db.session.commit()
   return jsonify({"message": "loan created","result": game_loan_schema.dump(new_loan)}), 201
 
-
-def get_loan_records():
+@authenticate_return_auth
+def get_loan_records(auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   loan_query = db.session.query(GameLoans).all()
 
   if not loan_query:
@@ -29,8 +33,10 @@ def get_loan_records():
 
   return jsonify({"message": "records retrieved", "results": game_loans_schema.dump(loan_query)}), 200
 
-
-def get_loan_records_by_borrower(borrower_id):
+@authenticate_return_auth
+def get_loan_records_by_borrower(borrower_id, auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
   loan_query = db.session.query(GameLoans).filter(GameLoans.borrower_id == borrower_id).all()
 
   if not loan_query:
@@ -38,8 +44,10 @@ def get_loan_records_by_borrower(borrower_id):
 
   return jsonify({"message": "records retrieved", "results": game_loans_schema.dump(loan_query)}), 200
 
-
-def get_loan_records_by_game(game_id):
+@authenticate_return_auth
+def get_loan_records_by_game(game_id, auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
   loan_query = db.session.query(GameLoans).filter(GameLoans.game_id == game_id).first()
 
   if not loan_query:
@@ -47,13 +55,17 @@ def get_loan_records_by_game(game_id):
 
   return jsonify({"message": "record retrieved", "results": game_loan_schema.dump(loan_query)}), 200
 
-
-def loan_record_by_id(loan_id):
+@authenticate_return_auth
+def loan_record_by_id(loan_id, auth_info):
+  if auth_info.user.role not in auth_level['user']:
+    return jsonify({"message": "unauthorized"}), 401
   loan_query = db.session.query(GameLoans).filter(GameLoans.loan_id == loan_id).first()
   if not loan_query:
     return jsonify({"message": "no record found"}), 404
 
   if request.method == "PUT":
+    if auth_info.user.role not in auth_level['admin']:
+      return jsonify({"message": "unauthorized"}), 401
     put_data = request.form if request.form else request.get_json()
     populate_object(loan_query, put_data)
 
@@ -67,8 +79,10 @@ def loan_record_by_id(loan_id):
   elif request.method == 'GET':
     return jsonify({"message": "loan record retrieved", "results": game_loan_schema.dump(loan_query)}), 200
 
-
-def delete_loan_record():
+@authenticate_return_auth
+def delete_loan_record(auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
   request_data = request.form if request.form else request.json
   loan_query = db.session.query(GameLoans).filter(GameLoans.loan_id == request_data["loan_id"]).first()
   if not loan_query:
