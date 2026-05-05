@@ -43,7 +43,10 @@ def rating_by_id(rating_id, auth_info):
   if not rating_query:
     return jsonify({"message": "no bgg rating found"}), 404
 
-  if request.method == "PUT":
+  if request.method == 'GET':
+    return jsonify({"message": "bgg rating retrieved", "results": bgg_rating_schema.dump(rating_query)}), 200
+  
+  elif request.method == "PUT":
     if auth_info.user.role not in auth_level['admin']:
       return jsonify({"message": "unauthorized"}), 401
     put_data = request.form if request.form else request.get_json()
@@ -56,8 +59,6 @@ def rating_by_id(rating_id, auth_info):
       return jsonify({"message": f"unable to update rating. {e}"}), 400
     return jsonify({"message": "bgg rating updated", "results": bgg_rating_schema.dump(rating_query)}), 200
     
-  elif request.method == 'GET':
-    return jsonify({"message": "bgg rating retrieved", "results": bgg_rating_schema.dump(rating_query)}), 200
   
 @authenticate_return_auth
 def rating_by_game_id(game_id, auth_info):
@@ -70,7 +71,7 @@ def rating_by_game_id(game_id, auth_info):
 
 @authenticate_return_auth
 def delete_rating(auth_info):
-  if auth_info.user.role not in auth_level['admin']:
+  if auth_info.user.role not in auth_level['super']:
     return jsonify({"message": "unauthorized"}), 401
   request_data = request.form if request.form else request.json
   rating_query = db.session.query(BGGRatings).filter(BGGRatings.rating_id == request_data["rating_id"]).first()

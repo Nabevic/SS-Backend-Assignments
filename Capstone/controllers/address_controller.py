@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from db import db
 from models.addresses import Addresses, address_schema, addresses_schema
+from models.users import Users, user_schema, users_schema
 from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
@@ -17,7 +18,6 @@ def add_address(auth_info):
   new_address = Addresses.new_address_obj()
   populate_object(new_address, post_data)
 
-
   try:
     db.session.add(new_address)
   except Exception as e:
@@ -25,6 +25,17 @@ def add_address(auth_info):
     return jsonify({"message": f"unable to add address. {e}"}), 400
 
   db.session.commit()
+
+  if auth_info.user.role == 'user' and auth_info.user.user_address == 'null':
+    user_query = db.session.query(Users).filter(Users.user_id == auth_info.user.user_id).first()
+    user_address = address_schema.dump(new_address)
+    populate_object(user_query, {"user_address": user_address["address_id"]})
+    try:
+      db.session.commit()
+    except Exception as e:
+      db.session.rollback()
+      return jsonify({"message": f"unable to add address to user. {e}"}), 400
+
   return jsonify({"message": "address created","result": address_schema.dump(new_address)}), 201
 
 
@@ -50,21 +61,22 @@ def address_by_id(address_id, auth_info):
   if not address_query:
     return jsonify({"message": "no address found"}), 404
 
-  if request.method == "PUT":
-    if auth_info.user.role not in auth_level['admin']:
-      return jsonify({"message": "unauthorized"}), 401
-    
-    put_data = request.form if request.form else request.get_json()
-    populate_object(address_query, put_data)
-    try:
-      db.session.commit()
-    except Exception as e:
-      db.session.rollback()
-      return jsonify({"message": f"unable to update address. {e}"}), 400
-    return jsonify({"message": "address updated", "results": address_schema.dump(address_query)}), 200
-    
-  elif request.method == 'GET':
+  if request.method == 'GET':
     return jsonify({"message": "address retrieved", "results": address_schema.dump(address_query)}), 200
+  
+  elif request.method == "PUT":
+    if str(auth_info.user.user_address) == str(address_id) or auth_info.user.role in auth_level['super']:
+    
+      put_data = request.form if request.form else request.get_json()
+      populate_object(address_query, put_data)
+      try:
+        db.session.commit()
+      except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"unable to update address. {e}"}), 400
+      return jsonify({"message": "address updated", "results": address_schema.dump(address_query)}), 200
+    return jsonify({"message": "unauthorized"}), 401
+    
 
 
 

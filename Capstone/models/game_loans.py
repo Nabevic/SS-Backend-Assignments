@@ -1,9 +1,12 @@
 import marshmallow as ma
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from datetime import datetime, timedelta
 
 from db import db
 
+today_datetime = datetime.today()
+due_datetime = today_datetime + timedelta(days=30)
 
 class GameLoans(db.Model):
   __tablename__ = "GameLoans"
@@ -11,8 +14,8 @@ class GameLoans(db.Model):
   loan_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
   game_id = db.Column(UUID(as_uuid=True), db.ForeignKey("BoardGames.game_id"))
   borrower_id = db.Column(UUID(as_uuid=True), db.ForeignKey("Users.user_id"))
-  date_borrowed = db.Column(db.DateTime(), nullable=False)
-  date_due = db.Column(db.DateTime())
+  date_borrowed = db.Column(db.DateTime(), nullable=False, default=today_datetime )
+  date_due = db.Column(db.DateTime(), default=due_datetime)
   date_returned = db.Column(db.DateTime())
   notes = db.Column(db.String())
 
@@ -28,7 +31,7 @@ class GameLoans(db.Model):
     self.notes = notes
 
   def new_loan_obj():
-    return GameLoans('','','',None,None,'')
+    return GameLoans('','',None,None,None,'')
   
 
 class GameLoansSchema(ma.Schema):
@@ -38,9 +41,9 @@ class GameLoansSchema(ma.Schema):
   loan_id = ma.fields.UUID()
   game_id = ma.fields.UUID(required=True)
   borrower_id = ma.fields.UUID(required=True)
-  date_borrowed = ma.fields.DateTime(required=True)
-  date_due =ma.fields.DateTime(allow_none=True)
-  date_returned = ma.fields.DateTime(allow_none=True)
+  date_borrowed = ma.fields.DateTime(required=True, dump_default=today_datetime, format="%Y-%m-%d")
+  date_due =ma.fields.DateTime(allow_none=True, dump_default=due_datetime, format="%Y-%m-%d")
+  date_returned = ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
   notes = ma.fields.String(allow_none=True)
 
 game_loan_schema = GameLoansSchema()

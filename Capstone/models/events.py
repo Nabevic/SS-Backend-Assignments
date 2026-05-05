@@ -13,7 +13,7 @@ class Events(db.Model):
   event_address = db.Column(UUID(as_uuid=True), db.ForeignKey('Addresses.address_id'))
   name = db.Column(db.String(), nullable=False)
   date = db.Column(db.DateTime())
-  time = db.Column(db.DateTime())
+  time = db.Column(db.Time())
   description = db.Column(db.String())
 
   host = db.relationship("Users", foreign_keys='[Events.host_id]', back_populates='event')
@@ -38,8 +38,8 @@ class EventsSchema(ma.Schema):
 
   event_id = ma.fields.UUID()
   name = ma.fields.String(required=True)
-  date = ma.fields.DateTime(required=True)
-  time = ma.fields.DateTime(allow_none=True)
+  date = ma.fields.DateTime(required=True, format="%Y-%m-%d")
+  time = ma.fields.Time(allow_none=True, format="%H:%M")
   description = ma.fields.String(allow_none=True)
 
   host = ma.fields.Nested("UsersSchema", only=['user_id', 'first_name', 'last_name', 'phone'])

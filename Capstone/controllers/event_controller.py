@@ -56,26 +56,27 @@ def event_by_id(event_id, auth_info):
   if not event_query:
     return jsonify({"message": "no event found"}), 404
 
-  if request.method == "PUT":
-    if auth_info.user.role not in auth_level['admin']:
-      return jsonify({"message": "unauthorized"}), 401
-    put_data = request.form if request.form else request.get_json()
-    populate_object(event_query, put_data)
-
-    try:
-      db.session.commit()
-    except Exception as e:
-      db.session.rollback()
-      return jsonify({"message": f"unable to update event. {e}"}), 400
-    return jsonify({"message": "event updated", "results": event_schema.dump(event_query)}), 200
-    
-  elif request.method == 'GET':
+  if request.method == 'GET':
     return jsonify({"message": "event retrieved", "results": event_schema.dump(event_query)}), 200
+  
+  elif request.method == "PUT":
+    if auth_info.user.user_id == event_query.host_id or auth_info.user.role in auth_level['admin']:
+      put_data = request.form if request.form else request.get_json()
+      populate_object(event_query, put_data)
+
+      try:
+        db.session.commit()
+      except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"unable to update event. {e}"}), 400
+      return jsonify({"message": "event updated", "results": event_schema.dump(event_query)}), 200
+    return jsonify({"message": "unauthorized"}), 401
+    
 
 
 @authenticate_return_auth
 def delete_event(auth_info):
-  if auth_info.user.role not in auth_level['admin']:
+  if auth_info.user.role not in auth_level['super']:
     return jsonify({"message": "unauthorized"}), 401
   request_data = request.form if request.form else request.json
   event_query = db.session.query(Events).filter(Events.event_id == request_data["event_id"]).first()

@@ -43,7 +43,10 @@ def category_by_id(category_id, auth_info):
   if not category_query:
     return jsonify({"message": "no category found"}), 404
 
-  if request.method == "PUT":
+  if request.method == 'GET':
+    return jsonify({"message": "category retrieved", "results": category_schema.dump(category_query)}), 200
+  
+  elif request.method == "PUT":
     if auth_info.user.role not in auth_level['admin']:
       return jsonify({"message": "unauthorized"}), 401
     put_data = request.form if request.form else request.get_json()
@@ -56,15 +59,13 @@ def category_by_id(category_id, auth_info):
       return jsonify({"message": f"unable to update category. {e}"}), 400
     return jsonify({"message": "category updated", "results": category_schema.dump(category_query)}), 200
     
-  elif request.method == 'GET':
-    return jsonify({"message": "category retrieved", "results": category_schema.dump(category_query)}), 200
 
 
 @authenticate_return_auth
 def delete_category(auth_info):
   user_data = request.form if request.form else request.get_json()
 
-  if auth_info.user.role not in auth_level['admin']:
+  if auth_info.user.role not in auth_level['super']:
     return jsonify({"message": "unauthorized"}), 401
   category_query = db.session.query(Categories).filter(Categories.category_id == user_data["category_id"]).first()
   if not category_query:

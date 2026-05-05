@@ -26,6 +26,10 @@ def get_loan_records_by_game_route(game_id):
 def loan_record_by_id_route(loan_id):
   return controllers.loan_record_by_id(loan_id)
 
+@gameloan.route('/gameloan/return/<loan_id>', methods=['PUT'])
+def loan_record_return_route(loan_id):
+  return controllers.loan_record_return(loan_id)
+
 @gameloan.route('/gameloan/delete', methods=['DELETE'])
 def delete_loan_record_route():
   return controllers.delete_loan_record()

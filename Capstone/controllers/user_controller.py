@@ -69,7 +69,10 @@ def user_by_id(user_id, auth_info):
   if not user_query:
     return jsonify({"message": "no user found"}), 404
 
-  if request.method == "PUT":
+  if request.method == 'GET':
+    return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+  
+  elif request.method == "PUT":
     if auth_info.user.role not in auth_level['admin']:
       return jsonify({"message": "unauthorized"}), 401
   
@@ -86,8 +89,6 @@ def user_by_id(user_id, auth_info):
       return jsonify({"message": f"unable to update user. {e}"}), 400
     return jsonify({"message": "user updated", "results": user_schema.dump(user_query)}), 200
     
-  elif request.method == 'GET':
-    return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
 
 
 @authenticate_return_auth
