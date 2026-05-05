@@ -26,6 +26,10 @@ def get_user_profile_route():
 def user_by_id(user_id):
   return controllers.user_by_id(user_id)
 
+@user.route('/user/activation', methods=['PUT'])
+def user_activation_route():
+  return controllers.user_activation_route()
+
 @user.route('/user/delete', methods=['DELETE'])
 def delete_user():
   return controllers.delete_user()

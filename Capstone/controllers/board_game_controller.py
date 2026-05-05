@@ -19,12 +19,13 @@ def add_board_game(auth_info):
 
   try:
     db.session.add(new_board_game)
+    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to add boardgame. {e}"}), 400
 
-  db.session.commit()
   return jsonify({"message": "boardgame created","result": board_game_details_schema.dump(new_board_game)}), 201
+
 
 
 @authenticate_return_auth
@@ -50,6 +51,7 @@ def add_board_game_category(auth_info):
   return jsonify({"message": "category added to boardgame", "result": board_game_details_schema.dump(board_game_query)}), 201
 
 
+
 @authenticate_return_auth
 def get_board_games(auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -60,6 +62,7 @@ def get_board_games(auth_info):
     return jsonify({"message": "no board games found"}), 404
 
   return jsonify({"message": "board games retrieved", "results": board_games_schema.dump(board_game_query)}), 200
+
 
 
 @authenticate_return_auth
@@ -74,6 +77,7 @@ def get_board_games_by_owner(user_id, auth_info):
   return jsonify({"message": "board games retrieved", "results": board_games_schema.dump(board_game_query)}), 200
 
 
+
 @authenticate_return_auth
 def get_board_games_by_players(max_players, auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -84,6 +88,7 @@ def get_board_games_by_players(max_players, auth_info):
     return jsonify({"message": "no board games found"}), 404
 
   return jsonify({"message": "board games retrieved", "results": board_games_schema.dump(board_game_query)}), 200
+
 
 
 @authenticate_return_auth
@@ -151,6 +156,7 @@ def remove_board_game_category(auth_info):
     
   db.session.commit()
   return jsonify({"message": "category association removed", "result": board_game_schema.dump(board_game_query)}), 200
+
 
 
 @authenticate_return_auth

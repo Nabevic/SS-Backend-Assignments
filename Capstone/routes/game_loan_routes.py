@@ -14,6 +14,10 @@ def add_loan_record_route():
 def get_loan_records_route():
   return controllers.get_loan_records()
 
+@gameloan.route('/gameloans/active', methods=['GET'])
+def get_active_loan_records_route():
+  return controllers.get_active_loan_records()
+
 @gameloan.route('/gameloans/<borrower_id>', methods=['GET'])
 def get_loan_records_by_borrower_route(borrower_id):
   return controllers.get_loan_records_by_borrower(borrower_id)

@@ -20,11 +20,10 @@ def add_address(auth_info):
 
   try:
     db.session.add(new_address)
+    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to add address. {e}"}), 400
-
-  db.session.commit()
 
   if auth_info.user.role == 'user' and auth_info.user.user_address == 'null':
     user_query = db.session.query(Users).filter(Users.user_id == auth_info.user.user_id).first()
@@ -39,6 +38,7 @@ def add_address(auth_info):
   return jsonify({"message": "address created","result": address_schema.dump(new_address)}), 201
 
 
+
 @authenticate_return_auth 
 def get_all_addresses(auth_info):
   if auth_info.user.role not in auth_level['admin']:
@@ -50,6 +50,7 @@ def get_all_addresses(auth_info):
     return jsonify({"message": "no addresses found"}), 404
 
   return jsonify({"message": "addresses retrieved", "results": addresses_schema.dump(address_query)}), 200
+
 
 
 @authenticate_return_auth 
@@ -77,7 +78,6 @@ def address_by_id(address_id, auth_info):
       return jsonify({"message": "address updated", "results": address_schema.dump(address_query)}), 200
     return jsonify({"message": "unauthorized"}), 401
     
-
 
 
 @authenticate_return_auth

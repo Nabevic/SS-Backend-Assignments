@@ -8,6 +8,7 @@ from models.users import Users
 from lib.authenticate import authenticate_return_auth
 
 
+
 def add_auth_token():
   post_data = request.form if request.form else request.json
   email = post_data.get('email')
@@ -44,6 +45,7 @@ def add_auth_token():
     return jsonify({"message":"auth success", "auth_info": auth_token_schema.dump(new_token)}), 201
   return jsonify({"message":"auth failed, could not find user"}), 404
   
+
 
 @authenticate_return_auth
 def delete_auth_token(auth_info):

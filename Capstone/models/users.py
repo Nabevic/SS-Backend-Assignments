@@ -48,7 +48,7 @@ class UsersSchema(ma.Schema):
   first_name = ma.fields.String(required=True)
   last_name = ma.fields.String(required=True)
   email = ma.fields.String(required=True)
-  birthdate = ma.fields.DateTime(required=True)
+  birthdate = ma.fields.DateTime(required=True, format="%Y-%m-%d")
   phone = ma.fields.String(allow_none=True)
   role = ma.fields.String(required=True, dump_default='user')
   active = ma.fields.Boolean(required=True, dump_default=True)

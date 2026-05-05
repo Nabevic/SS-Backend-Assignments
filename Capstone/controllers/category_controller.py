@@ -25,6 +25,7 @@ def add_category(auth_info):
   return jsonify({"message": "category created","result": category_schema.dump(new_category)}), 201
 
 
+
 @authenticate_return_auth
 def get_all_categories(auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -72,8 +73,9 @@ def delete_category(auth_info):
     return jsonify({"message": f"no category found with id {user_data['category_id']}"}), 404
   try:
     db.session.delete(category_query)
-    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to delete record. {e}"}), 400
+  
+  db.session.commit()
   return jsonify({"message": "category deleted", "result": category_schema.dump(category_query)}), 200

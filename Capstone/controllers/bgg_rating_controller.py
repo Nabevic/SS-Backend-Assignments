@@ -17,12 +17,14 @@ def add_rating_(auth_info):
 
   try:
     db.session.add(new_rating)
+    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to add rating. {e}"}), 400
 
-  db.session.commit()
   return jsonify({"message": "rating added","result": bgg_rating_schema.dump(new_rating)}), 201
+
+
 
 @authenticate_return_auth
 def get_ratings(auth_info):
@@ -35,6 +37,8 @@ def get_ratings(auth_info):
 
   return jsonify({"message": "bgg ratings retrieved", "results": bgg_ratings_schema.dump(ratings_query)}), 200
   
+
+
 @authenticate_return_auth
 def rating_by_id(rating_id, auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -60,6 +64,7 @@ def rating_by_id(rating_id, auth_info):
     return jsonify({"message": "bgg rating updated", "results": bgg_rating_schema.dump(rating_query)}), 200
     
   
+
 @authenticate_return_auth
 def rating_by_game_id(game_id, auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -68,6 +73,8 @@ def rating_by_game_id(game_id, auth_info):
   if not rating_query:
     return jsonify({"message": "no bgg rating found"}), 404
   return jsonify({"message": "bgg rating retrieved", "results": bgg_rating_schema.dump(rating_query)}), 200
+
+
 
 @authenticate_return_auth
 def delete_rating(auth_info):

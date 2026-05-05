@@ -18,11 +18,11 @@ def add_user():
 
   try:
     db.session.add(new_user)
+    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to add user. {e}"}), 400
 
-  db.session.commit()
   return jsonify({"message": "user created","result": user_schema.dump(new_user)}), 201
 
 
@@ -40,6 +40,7 @@ def get_all_users(auth_info):
   return jsonify({"message": "users retrieved", "results": users_schema.dump(user_query)}), 200
 
 
+
 @authenticate_return_auth 
 def get_active_users(auth_info):
   if auth_info.user.role not in auth_level['admin']:
@@ -53,6 +54,7 @@ def get_active_users(auth_info):
   return jsonify({"message": "users retrieved", "results": users_schema.dump(user_query)}), 200
 
 
+
 @authenticate_return_auth
 def get_user_profile(auth_info):
   user_query = db.session.query(Users).filter(Users.user_id == auth_info.user_id).first()
@@ -61,6 +63,7 @@ def get_user_profile(auth_info):
     return jsonify({"message": "no user found"}), 404
 
   return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+
 
 
 @authenticate_return_auth 
@@ -89,6 +92,27 @@ def user_by_id(user_id, auth_info):
       return jsonify({"message": f"unable to update user. {e}"}), 400
     return jsonify({"message": "user updated", "results": user_schema.dump(user_query)}), 200
     
+
+@authenticate_return_auth
+def user_activation_route( auth_info):
+  if auth_info.user.role not in auth_level['super']:
+    return jsonify({"message": "unauthorized"}), 401
+  
+  request_data = request.form if request.form else request.json
+  user_query = db.session.query(Users).filter(Users.user_id == request_data['user_id']).first()
+
+  if not user_query:
+    return jsonify({"message": f"no user found with id {request_data['user_id']}"}), 404
+  
+  else:
+    populate_object(user_query, request_data)
+  try:
+    db.session.commit()
+  except Exception as e:
+    db.session.rollback()
+    return jsonify({"message": f"unable to update user. {e}"}), 400
+  return jsonify({"message": "user updated", "results": user_schema.dump(user_query)}), 200
+
 
 
 @authenticate_return_auth

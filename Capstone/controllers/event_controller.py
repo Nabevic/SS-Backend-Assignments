@@ -5,6 +5,7 @@ from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
 
+
 @authenticate_return_auth 
 def add_event(auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -16,12 +17,13 @@ def add_event(auth_info):
 
   try:
     db.session.add(new_event)
+    db.session.commit()
   except Exception as e:
     db.session.rollback()
     return jsonify({"message": f"unable to add event. {e}"}), 400
 
-  db.session.commit()
   return jsonify({"message": "event created","result": event_schema.dump(new_event)}), 201
+
 
 
 @authenticate_return_auth 
@@ -36,6 +38,7 @@ def get_all_events(auth_info):
   return jsonify({"message": "events retrieved", "results": events_schema.dump(event_query)}), 200
 
 
+
 @authenticate_return_auth 
 def get_events_by_date(date, auth_info):
   if auth_info.user.role not in auth_level['user']:
@@ -46,6 +49,7 @@ def get_events_by_date(date, auth_info):
     return jsonify({"message": "no events found"}), 404
 
   return jsonify({"message": "events retrieved", "results": events_schema.dump(event_query)}), 200
+
 
 
 @authenticate_return_auth 

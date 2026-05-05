@@ -17,21 +17,23 @@ class GameLoans(db.Model):
   date_borrowed = db.Column(db.DateTime(), nullable=False, default=today_datetime )
   date_due = db.Column(db.DateTime(), default=due_datetime)
   date_returned = db.Column(db.DateTime())
+  active = db.Column(db.Boolean(), default=True)
   notes = db.Column(db.String())
 
   board_game = db.relationship("BoardGames", foreign_keys='[GameLoans.game_id]', back_populates='loan')
   user = db.relationship("Users", foreign_keys='[GameLoans.borrower_id]', back_populates='borrower')
 
-  def __init__(self, game_id, borrower_id, date_borrowed, date_due, date_returned, notes):
+  def __init__(self, game_id, borrower_id, date_borrowed, date_due, date_returned, active, notes):
     self.game_id = game_id
     self.borrower_id = borrower_id
     self.date_borrowed = date_borrowed
     self.date_due = date_due
     self.date_returned = date_returned
+    self.active = active
     self.notes = notes
 
   def new_loan_obj():
-    return GameLoans('','',None,None,None,'')
+    return GameLoans('','',None,None,None,True,'')
   
 
 class GameLoansSchema(ma.Schema):
@@ -41,9 +43,10 @@ class GameLoansSchema(ma.Schema):
   loan_id = ma.fields.UUID()
   game_id = ma.fields.UUID(required=True)
   borrower_id = ma.fields.UUID(required=True)
-  date_borrowed = ma.fields.DateTime(required=True, dump_default=today_datetime, format="%Y-%m-%d")
-  date_due =ma.fields.DateTime(allow_none=True, dump_default=due_datetime, format="%Y-%m-%d")
+  date_borrowed = ma.fields.DateTime(required=True, format="%Y-%m-%d")
+  date_due =ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
   date_returned = ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
+  active = ma.fields.Boolean(dump_default=True)
   notes = ma.fields.String(allow_none=True)
 
 game_loan_schema = GameLoansSchema()

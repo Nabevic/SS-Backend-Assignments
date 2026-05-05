@@ -12,9 +12,9 @@ def update_game_availability(board_game_id, status=False):
   board_game_query = db.session.query(BoardGames).filter(BoardGames.game_id == board_game_id).first()
   if not board_game_query:
     return
-  update_available = {"is_available": status} 
+  available = {"is_available": status} 
   try:
-    populate_object(board_game_query, update_available)
+    populate_object(board_game_query, available)
     db.session.commit()
   except Exception:
     db.session.rollback()
@@ -35,19 +35,18 @@ def add_loan_record(auth_info):
     if not board_game_query.is_available:
       return jsonify({"message": f"unable to checkout boardgame. boardgame already checked out"}), 400
 
+    available = {"is_available": False} 
     new_loan = GameLoans.new_loan_obj()
+    populate_object(board_game_query, available)
     populate_object(new_loan, post_data)
+    
 
     try:
       db.session.add(new_loan)
+      db.session.commit()
     except Exception as e:
       db.session.rollback()
       return jsonify({"message": f"unable to checkout boardgame. {e}"}), 400
-    
-    update_available = {"is_available": False} 
-    populate_object(board_game_query, update_available)
-
-    db.session.commit()
     return jsonify({"message": "boardgame checked out","result": game_loan_schema.dump(new_loan)}), 201
   
   return jsonify({"message": "unauthorized"}), 401
@@ -65,6 +64,19 @@ def get_loan_records(auth_info):
 
   return jsonify({"message": "records retrieved", "results": game_loans_schema.dump(loan_query)}), 200
 
+
+
+@authenticate_return_auth
+def get_active_loan_records(auth_info):
+  if auth_info.user.role not in auth_level['admin']:
+    return jsonify({"message": "unauthorized"}), 401
+  loan_query = db.session.query(GameLoans).filter(GameLoans.active == True).all()
+
+  if not loan_query:
+    return jsonify({"message": "no records found"}), 404
+
+  return jsonify({"message": "records retrieved", "results": game_loans_schema.dump(loan_query)}), 200
+  
 
 
 @authenticate_return_auth
@@ -109,6 +121,7 @@ def loan_record_by_id(loan_id, auth_info):
       put_data = request.form if request.form else request.get_json()
       if "date_returned" in put_data:
         update_game_availability(loan_query.game_id, True)
+        put_data["active"] = False
         
       populate_object(loan_query, put_data)
       
@@ -130,10 +143,11 @@ def loan_record_return(loan_id, auth_info):
   
   if auth_info.user.user_id == loan_query.board_game.owner or auth_info.user.role in auth_level['admin']:
 
-    date_returned = {"date_returned": datetime.today()}
+    updated_fields = {"date_returned": datetime.today(), "active": False}
+    
 
     update_game_availability(loan_query.game_id, True)
-    populate_object(loan_query, date_returned)
+    populate_object(loan_query, updated_fields)
     
     try:
       db.session.commit()
