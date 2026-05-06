@@ -16,7 +16,7 @@ class Events(db.Model):
   time = db.Column(db.Time())
   description = db.Column(db.String())
 
-  host = db.relationship("Users", foreign_keys='[Events.host_id]', back_populates='event')
+  host = db.relationship("Users", foreign_keys='[Events.host_id]', back_populates='events')
   address = db.relationship("Addresses", foreign_keys='Events.event_address', back_populates='event')
 
 

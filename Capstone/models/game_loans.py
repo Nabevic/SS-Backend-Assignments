@@ -38,13 +38,13 @@ class GameLoans(db.Model):
 
 class GameLoansSchema(ma.Schema):
   class Meta:
-    fields = ['loan_id', 'game_id', 'borrower_id', 'date_borrowed', 'date_due', 'date_returned', 'notes']
+    fields = ['loan_id', 'game_id', 'borrower_id', 'date_borrowed', 'date_due', 'date_returned', 'active', 'notes']
 
   loan_id = ma.fields.UUID()
   game_id = ma.fields.UUID(required=True)
   borrower_id = ma.fields.UUID(required=True)
   date_borrowed = ma.fields.DateTime(required=True, format="%Y-%m-%d")
-  date_due =ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
+  date_due = ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
   date_returned = ma.fields.DateTime(allow_none=True, format="%Y-%m-%d")
   active = ma.fields.Boolean(dump_default=True)
   notes = ma.fields.String(allow_none=True)

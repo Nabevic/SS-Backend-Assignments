@@ -30,7 +30,7 @@ def add_loan_record(auth_info):
   if not board_game_query:
     return jsonify({"message": f"unable to checkout boardgame. boardgame with id {post_data['game_id']} does not exist"}), 404
 
-  if auth_info.user.user_id == board_game_query.owner or auth_info.user.role in auth_level['admin']:
+  if auth_info.user.user_id == board_game_query.owner_id or auth_info.user.role in auth_level['admin']:
     
     if not board_game_query.is_available:
       return jsonify({"message": f"unable to checkout boardgame. boardgame already checked out"}), 400
@@ -98,10 +98,9 @@ def get_loan_records_by_game(game_id, auth_info):
   if not loan_query:
     return jsonify({"message": "no records found"}), 404
   
-  if auth_info.user.user_id != loan_query.board_game.owner or auth_info.user.role not in auth_level['admin']:
-    return jsonify({"message": "unauthorized"}), 401
-
-  return jsonify({"message": "record retrieved", "results": game_loan_schema.dump(loan_query)}), 200
+  if auth_info.user.user_id == loan_query.board_game.owner_id or auth_info.user.role in auth_level['admin']:
+    return jsonify({"message": "record retrieved", "results": game_loan_schema.dump(loan_query)}), 200
+  return jsonify({"message": "unauthorized"}), 401
 
 
 
@@ -112,12 +111,12 @@ def loan_record_by_id(loan_id, auth_info):
     return jsonify({"message": "no record found"}), 404
   
   if request.method == 'GET':
-    if auth_info.user.user_id == loan_query.board_game.owner or auth_info.user.user_id == loan_query.borrower_id or auth_info.user.role in auth_level['admin']:
+    if auth_info.user.user_id == loan_query.board_game.owner_id or auth_info.user.user_id == loan_query.borrower_id or auth_info.user.role in auth_level['admin']:
       return jsonify({"message": "loan record retrieved", "results": game_loan_schema.dump(loan_query)}), 200
     return jsonify({"message": "unauthorized"}), 401
   
   elif request.method == "PUT":
-    if auth_info.user.user_id == loan_query.board_game.owner or auth_info.user.role in auth_level['admin']:
+    if auth_info.user.user_id == loan_query.board_game.owner_id or auth_info.user.role in auth_level['admin']:
       put_data = request.form if request.form else request.get_json()
       if "date_returned" in put_data:
         update_game_availability(loan_query.game_id, True)
@@ -141,7 +140,7 @@ def loan_record_return(loan_id, auth_info):
   if not loan_query:
     return jsonify({"message": "no record found"}), 404
   
-  if auth_info.user.user_id == loan_query.board_game.owner or auth_info.user.role in auth_level['admin']:
+  if auth_info.user.user_id == loan_query.board_game.owner_id or auth_info.user.role in auth_level['admin']:
 
     updated_fields = {"date_returned": datetime.today(), "active": False}
     

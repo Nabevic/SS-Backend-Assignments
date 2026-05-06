@@ -2,7 +2,7 @@ from flask import jsonify, request
 from flask_bcrypt import generate_password_hash
 
 from db import db
-from models.users import Users, user_schema, users_schema
+from models.users import Users, user_schema, users_schema, user_detail_schema
 from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
@@ -62,7 +62,7 @@ def get_user_profile(auth_info):
   if not user_query:
     return jsonify({"message": "no user found"}), 404
 
-  return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+  return jsonify({"message": "user retrieved", "results": user_detail_schema.dump(user_query)}), 200
 
 
 
@@ -95,17 +95,20 @@ def user_by_id(user_id, auth_info):
 
 @authenticate_return_auth
 def user_activation_route( auth_info):
-  if auth_info.user.role not in auth_level['super']:
+  if auth_info.user.role not in auth_level['admin']:
     return jsonify({"message": "unauthorized"}), 401
   
-  request_data = request.form if request.form else request.json
-  user_query = db.session.query(Users).filter(Users.user_id == request_data['user_id']).first()
-
-  if not user_query:
-    return jsonify({"message": f"no user found with id {request_data['user_id']}"}), 404
-  
   else:
+    request_data = request.form if request.form else request.json
+    user_query = db.session.query(Users).filter(Users.user_id == request_data['user_id']).first()
+    if not user_query:
+      return jsonify({"message": f"no user found with id {request_data['user_id']}"}), 404
+    
+    if user_query.role != 'user' and auth_info.user.role != 'super':
+        return jsonify({"message": "unauthorized"}), 401
+  
     populate_object(user_query, request_data)
+
   try:
     db.session.commit()
   except Exception as e:

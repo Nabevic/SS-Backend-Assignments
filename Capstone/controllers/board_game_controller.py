@@ -69,7 +69,7 @@ def get_board_games(auth_info):
 def get_board_games_by_owner(user_id, auth_info):
   if auth_info.user.role not in auth_level['user']:
     return jsonify({"message": "unauthorized"}), 401
-  board_game_query = db.session.query(BoardGames).filter(BoardGames.owner == user_id).all()
+  board_game_query = db.session.query(BoardGames).filter(BoardGames.owner_id == user_id).all()
 
   if not board_game_query:
     return jsonify({"message": "no board games found"}), 404
@@ -116,7 +116,7 @@ def board_game_by_id(game_id, auth_info):
     return jsonify({"message": "board game retrieved", "results": board_game_details_schema.dump(board_game_query)}), 200
 
   elif request.method == "PUT":
-    if auth_info.user.user_id == board_game_query.owner or auth_info.user.role in auth_level['admin']:
+    if auth_info.user.user_id == board_game_query.owner_id or auth_info.user.role in auth_level['admin']:
       put_data = request.form if request.form else request.get_json()
       populate_object(board_game_query, put_data)
       try:

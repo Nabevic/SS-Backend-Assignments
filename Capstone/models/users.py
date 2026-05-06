@@ -21,8 +21,9 @@ class Users(db.Model):
 
   auth = db.relationship('AuthTokens', back_populates='user', cascade='all')
   address = db.relationship('Addresses', foreign_keys='[Users.user_address]', back_populates='user')
-  event = db.relationship("Events", foreign_keys='[Events.host_id]', back_populates='host')
+  events = db.relationship("Events", foreign_keys='[Events.host_id]', back_populates='host')
   borrower = db.relationship("GameLoans", foreign_keys='[GameLoans.borrower_id]', back_populates='user')
+  games = db.relationship("BoardGames", foreign_keys='[BoardGames.owner_id]', back_populates='owner')
 
   def __init__(self, user_address, first_name, last_name, email, password, birthdate, phone, role, active):
     self.user_address = user_address
@@ -41,7 +42,7 @@ class Users(db.Model):
 
 class UsersSchema(ma.Schema):
   class Meta:
-    fields = [ 'user_id', 'user_address', 'first_name', 'last_name', 'email', 'birthdate', 'phone', 'role', 'active']
+    fields = ['user_id', 'user_address', 'first_name', 'last_name', 'email', 'birthdate', 'phone', 'role', 'active']
 
   user_id = ma.fields.UUID()
   user_address = ma.fields.UUID(allow_none=True)
@@ -53,5 +54,14 @@ class UsersSchema(ma.Schema):
   role = ma.fields.String(required=True, dump_default='user')
   active = ma.fields.Boolean(required=True, dump_default=True)
 
+class UsersDetailSchema(UsersSchema):
+  class Meta:
+    fields = ['user_id', 'user_address', 'first_name', 'last_name', 'email', 'birthdate', 'phone', 'role', 'active', 'address','events', 'games']
+
+  address = ma.fields.Nested("AddressesSchema")
+  events = ma.fields.Nested("EventsSchema", many=True)
+  games = ma.fields.Nested("BoardGamesSchema", many=True)
+
 user_schema = UsersSchema()
 users_schema = UsersSchema(many=True)
+user_detail_schema = UsersDetailSchema()

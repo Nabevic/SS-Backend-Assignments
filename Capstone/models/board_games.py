@@ -9,7 +9,7 @@ class BoardGames(db.Model):
   __tablename__ = 'BoardGames'
 
   game_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-  owner = db.Column(UUID(as_uuid=True), db.ForeignKey('Users.user_id'))
+  owner_id = db.Column(UUID(as_uuid=True), db.ForeignKey('Users.user_id'))
   title = db.Column(db.String(), nullable=False)
   description = db.Column(db.String())
   min_age = db.Column(db.Integer())
@@ -20,9 +20,10 @@ class BoardGames(db.Model):
   bgg_rating = db.relationship("BGGRatings", foreign_keys='[BGGRatings.game_id]', back_populates='board_game', uselist=False)
   loan = db.relationship("GameLoans", foreign_keys='[GameLoans.game_id]', back_populates='board_game')
   categories = db.relationship("Categories", secondary=games_categories_association_table, back_populates='board_games')
+  owner = db.relationship("Users", foreign_keys='[BoardGames.owner_id]', back_populates='games')
 
-  def __init__(self, owner, title, description, min_age, max_players, play_time, is_available):
-    self.owner = owner
+  def __init__(self, owner_id, title, description, min_age, max_players, play_time, is_available):
+    self.owner_id = owner_id
     self.title = title
     self.description = description
     self.min_age = min_age
@@ -35,10 +36,10 @@ class BoardGames(db.Model):
   
 class BoardGameDetailsSchema(ma.Schema):
   class Meta:
-    fields = ['game_id', 'owner', 'title', 'description', 'min_age', 'max_players', 'play_time', 'is_available', 'bgg_rating', 'categories','loan']
+    fields = ['game_id', 'owner_id', 'title', 'description', 'min_age', 'max_players', 'play_time', 'is_available', 'bgg_rating', 'categories']
     
   game_id = ma.fields.UUID()
-  owner = ma.fields.UUID()
+  owner_id = ma.fields.UUID()
   title = ma.fields.String(required=True)
   description = ma.fields.String()
   min_age = ma.fields.Integer()
@@ -48,12 +49,11 @@ class BoardGameDetailsSchema(ma.Schema):
 
   bgg_rating = ma.fields.Nested("BGGRatingsSchema")
   categories = ma.fields.Nested("CategoriesSchema", many=True)
-  loan = ma.fields.Nested("GameLoansSchema")
 
 
 class BoardGamesSchema(BoardGameDetailsSchema):
   class Meta:
-    fields = ['game_id', 'owner', 'title', 'min_age', 'max_players', 'is_available', 'categories']
+    fields = ['game_id', 'owner_id', 'title', 'min_age', 'max_players', 'is_available', 'categories']
 
 board_game_schema = BoardGamesSchema()
 board_games_schema = BoardGamesSchema(many=True)
