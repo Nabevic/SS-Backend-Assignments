@@ -5,7 +5,7 @@ import controllers
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/user/auth', methods=['POST'])
+@auth.route('/login', methods=['POST'])
 def add_auth_token_route():
   return controllers.add_auth_token()
 

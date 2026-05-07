@@ -62,6 +62,12 @@ class UsersDetailSchema(UsersSchema):
   events = ma.fields.Nested("EventsSchema", many=True)
   games = ma.fields.Nested("BoardGamesSchema", many=True)
 
+
+class UsersBasicSchema(UsersSchema):
+  class Meta:
+    fields = ['user_id', 'first_name', 'last_name', 'email' ]
+
 user_schema = UsersSchema()
 users_schema = UsersSchema(many=True)
 user_detail_schema = UsersDetailSchema()
+user_basic_schema = UsersBasicSchema()

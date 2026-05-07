@@ -2,7 +2,7 @@ from flask import jsonify, request
 from flask_bcrypt import generate_password_hash
 
 from db import db
-from models.users import Users, user_schema, users_schema, user_detail_schema
+from models.users import Users, user_schema, users_schema, user_detail_schema, user_basic_schema
 from util.reflection import populate_object
 from lib.authenticate import authenticate_return_auth, authenticate, auth_level
 
@@ -73,7 +73,13 @@ def user_by_id(user_id, auth_info):
     return jsonify({"message": "no user found"}), 404
 
   if request.method == 'GET':
-    return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+    if auth_info.user.role == 'user':
+      return jsonify({"message": "user retrieved", "results": user_schema.dump(user_query)}), 200
+    
+    if auth_info.user.role in auth_level['admin']:
+      return jsonify({"message": "user retrieved", "results": user_basic_schema.dump(user_query)}), 200
+    
+    else: return jsonify({"message": "unauthorized"}), 401
   
   elif request.method == "PUT":
     if auth_info.user.role not in auth_level['admin']:
