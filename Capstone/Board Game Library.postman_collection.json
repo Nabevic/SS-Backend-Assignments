@@ -1,0 +1,1246 @@
+{
+  "info": {
+    "_postman_id": "1e31d140-00f9-4ce1-8a38-20885512811e",
+    "name": "Board Game Library",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51366880",
+    "_collection_link": "https://go.postman.co/collection/51366880-1e31d140-00f9-4ce1-8a38-20885512811e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Auth",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"john.doe@example.com\",\r\n    \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/logout",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Add User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    // \"user_address\": \"{{address_id}}\",\r\n    // \"user_address\": null,\r\n    \"first_name\": \"John\",\r\n    \"last_name\": \"Doe\",\r\n    \"email\": \"john.doe@example.com\",\r\n    \"password\": \"password123\",\r\n    \"birthdate\": \"1990-01-01\",\r\n    \"phone\": \"123-456-7890\",\r\n    \"role\": \"super\"\r\n    \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/user",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/active",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/user/profile",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/user/{{user_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"user_address\": \"{{address_id}}\",\r\n    \"active\": true,\r\n    \"role\": \"admin\",\r\n    \"birthdate\": \"1991-11-11\",\r\n    \"email\": \"jane@example.com\",\r\n    \"first_name\": \"Jane\",\r\n    \"last_name\": \"Doe\",\r\n    \"phone\": \"123-456-8080\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/user/{{user_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Activation",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"user_id\": \"d6731bf4-ad91-46ec-b4b4-c7e92e9cece1\",\r\n    \"active\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/user/activation",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user",
+                "activation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"user_id\": \"{{user_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/user/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "user",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "Add Address",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"address_1\": \"50 N 100 W\",\r\n    \"address_2\": \"Apt B4\",\r\n    \"city\": \"Pleasant Grove\",\r\n    \"state\": \"UT\",\r\n    \"postal_code\": \"84062\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/address",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "address"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Addresses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/addresses",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Address By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/address/{{address_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "address",
+                "{{address_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"address_1\": \"123 Random St\",\r\n    \"address_2\": \"Apt R404\",\r\n    \"city\": \"Orem\",\r\n    \"postal_code\": \"84057\",\r\n    \"state\": \"UT\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/address/{{address_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "address",
+                "{{address_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Address",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"address_id\": \"{{address_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/address/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "address",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "item": [
+        {
+          "name": "Add Event",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"host_id\": \"{{user_id}}\",\r\n    \"event_address\": \"{{address_id}}\",\r\n    \"name\": \"Game Night\",\r\n    \"date\": \"2026-05-30\",\r\n    \"time\": \"18:00\",\r\n    \"description\": \"Game night at my place. Bring your Favorite Boardgame. I'll supply pizza and snacks.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/event",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "event"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/events",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Events By Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/events/{{date}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "events",
+                "{{date}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Event By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/event/{{event_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "event",
+                "{{event_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Monthly Game Night\",\r\n    \"date\": \"2025-5-31\",\r\n    \"time\": \"18:30\",\r\n    \"description\": \"Game night at my place. Bring your Favorite Boardgame. I'll supply pizza and snacks. If you have any requests, shoot me a text before 5/30\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/event/{{event_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "event",
+                "{{event_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"event_id\": \"{{event_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/event/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "event",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Add Category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"category_name\":\"Cooperative\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/category",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/categories",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/category/{{category_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "category",
+                "{{category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"category_name\": \"Strategy\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/category/{{category_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "category",
+                "{{category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"category_id\": \"{{category_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/category/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "category",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "BGG Ratings",
+      "item": [
+        {
+          "name": "Add Rating",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"game_id\": \"{{game_id}}\",\r\n    \"rating\": 8.3,\r\n    \"url\": \"https://boardgamegeek.com/boardgame/358661/andromedas-edge\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/rating",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "rating"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ratings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/ratings",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "ratings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Rating By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/rating/{{rating_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "rating",
+                "{{rating_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Rating by Game Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/rating/game/{{game_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "rating",
+                "game",
+                "{{game_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Rating",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"rating_id\": \"{{rating_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/rating/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "rating",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Board Games",
+      "item": [
+        {
+          "name": "Add Boardgame",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"owner_id\": \"{{user_id}}\",\r\n    \"title\": \"Spirit Island\",\r\n    \"description\": \"Island Spirits join forces using elemental powers to defend their home from invaders.\",\r\n    \"min_age\": 13,\r\n    \"max_players\": 4,\r\n    \"play_time\": \"90-120 minutes\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgame",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Boardgame Category Assoc",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"game_id\": \"{{game_id}}\",\r\n    \"category_id\": \"{{category_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgame/category",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame",
+                "category"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Games",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"owner\": \"{{user_id}}\",\r\n    \"title\": \"New Board Game\",\r\n    \"description\": \"A fun board game for all ages\",\r\n    \"min_age\": 10,\r\n    \"max_players\": 4,\r\n    \"play_time\": \"60 minutes\"\r\n\r\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgames",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgames"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Games by Owner",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/boardgames/owner/{{user_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgames",
+                "owner",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Games By Players",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/boardgames/players/4",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgames",
+                "players",
+                "4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Games By Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/boardgames/category/{{category_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgames",
+                "category",
+                "{{category_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Board Game By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/boardgame/{{game_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame",
+                "{{game_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Board Game",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Spirit Island: Jagged Earth\",\r\n    \"description\": \"The Earth itself aligns with you! Save the island from the worst peril it has faced!\",\r\n    \"max_players\": 6,\r\n    \"is_available\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgame/{{game_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame",
+                "{{game_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Boardgame Category Assoc",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"game_id\": \"{{game_id}}\",\r\n    \"category_id\": \"{{category_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgame/category/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame",
+                "category",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Board Game",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"game_id\": \"{{game_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/boardgame/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "boardgame",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Game Loans",
+      "item": [
+        {
+          "name": "Add Loan",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"game_id\": \"{{game_id}}\",\r\n    \"borrower_id\": \"{{borrower_id}}\",\r\n    \"date_borrowed\": \"4-27-2026\",\r\n    // \"date_due\": \"5-15-2026\",\r\n    \"notes\": \"The pieces for the 5th and 6th player are not included. If you plan on playing with 5-6 players, you will need to borrow the expansion as well.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/gameloan",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloans",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloans"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Loans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloans/active",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloans",
+                "active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loans By Borrower",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloans/{{borrower_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloans",
+                "{{borrower_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loan By Game Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloan/boardgame/{{game_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan",
+                "boardgame",
+                "{{game_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Loan by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloan/{{loan_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan",
+                "{{loan_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Loan",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    // \"date_returned\": \"2026-05-01\"\r\n    \"date_due\": \"2026-06-05\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/gameloan/{{loan_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan",
+                "{{loan_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Return Game",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/gameloan/return/{{loan_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan",
+                "return",
+                "{{loan_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Loan",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"loan_id\": \"{{loan_id}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/gameloan/delete",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "gameloan",
+                "delete"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "482af36f-bf0d-4f75-a99c-5405d6989216",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "auth",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    },
+    {
+      "key": "address_id",
+      "value": ""
+    },
+    {
+      "key": "event_id",
+      "value": ""
+    },
+    {
+      "key": "game_id",
+      "value": ""
+    },
+    {
+      "key": "loan_id",
+      "value": ""
+    },
+    {
+      "key": "borrower_id",
+      "value": ""
+    },
+    {
+      "key": "category_id",
+      "value": ""
+    },
+    {
+      "key": "rating_id",
+      "value": ""
+    },
+    {
+      "key": "date",
+      "value": ""
+    }
+  ]
+}
