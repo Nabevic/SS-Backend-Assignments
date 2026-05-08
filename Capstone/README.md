@@ -1,8 +1,8 @@
-# Back-End Capstone - Game Night Database
+# Back-End Capstone - Board Game Library
 
 ## Project Description
 
-This is a database for users to store information about their boardgames, loan them out or borrow others, and schedule events , like a game night, for others to attend.
+This is a database for users to store information about their boardgames, loan them out or borrow others, and schedule events for others to attend. Information about a board game like owner, number of players, category, and link to its page on Board Game Geek, is kept and can be accessed by users. Records of games you borrow or loan out to other users are kept along, with when it was borrowed and when it needs to be returned. Events can be posted for other users to schedule game nights, tournaments, meetups, etc.. Admins manage data for boardgames, loans, and events. Super Admins manage user information and addresses.
 
 ## Features
 
@@ -31,14 +31,6 @@ This is a database for users to store information about their boardgames, loan t
 - All capabilities of Users and Admins
 - Edit a Users address
 - Delete any record or User
-
-## Installation
-
-1. Clone repository
-
-2. Install Dependencies
-
-3. Environment Setup
 
 ## Tables
 
@@ -130,13 +122,11 @@ This is a database for users to store information about their boardgames, loan t
 | /gameloan/return/<loan_id>     | PUT    | Admin , Owner | Sets the date_returned field, and updates the borrowed game’s available field to True. BoardGame owner or admin+ required.                            |
 | /gameloan/delete               | DELETE | Super         | Remove a loan record. Super Admin required.                                                                                                           |
 
-### Example Data
-
 ## What I learned ths Semester
 
-The thing that stood out the most from what I learned would be Schemas. They were something intimidating at first. After a little experimention though, and a few builds I got the hang of them. I like that you can control what information a model sends through the use of multiple schemas. And that they take advantive of inheritance.
+The thing that stood out the most from what I learned would be Marshmallow Schemas. They were something intimidating at first. After a little experimentation and a few builds I got the hang of them. I like that you can control what information a model sends through the use of multiple schemas. It was fun setting them up to send the right kind of information for a particular route.
 
-I also learned that consistency goes a long way. This semester was jam packed with additional responsabilities outside of this course. Having to juggle school, work, My Story Matters, health issues, and kids really leaves you with little time for anything, especially homework. However, I found that I could still get these big projects done when consistently following the schedule I layed out for myself. I just kept making babysteps and then all of a sudden we're here at the end.
+I also learned that consistency goes a long way. This semester was jam packed with additional responsibilities outside of this course. Having to juggle school, work, My Story Matters, health issues, and kids really leaves you with little time for anything, especially homework. However, I found that I could still get these big projects done when consistently following the schedule I laid out for myself. I just kept making baby steps and then all of a sudden we're here at the end.
 
 ## Favorite Part of Class
 
